@@ -1,0 +1,77 @@
+1.给容器中注册组件
+    包扫描+组件标识注解(@ComponentScan + @Component、@controller、@service、@Repository)
+    @bean(导入第三方包里面的组件)，配合@conditonal 按条件导入
+    @Import快速给IOC容器导入组件
+        @Import(要导入组件.class) 导入一个组件， 默认bean的名称为 全类名 com.li.spring.bean.Color
+        实现ImportSelector的selectImports()，返回需要导入bean的全类名
+        ImportBeanDefinitionRegistrar 手动注册bean到IOC容器中
+        使用spring提供的factoryBean(工厂Bean)
+            默认获取的是工厂bean调用getObject()创建的对象
+            要获取factoryBean对象本身，需要在在ID前面加 &
+
+2.bean生命周期
+    register(annotatedClasses)
+    refresh() 刷新容器
+    finishBeanFactoryInitialization(beanFactory) 初始化所有剩下的单实例对象
+    beanFactory.preInstantiateSingletons()  初始化所有剩下的单实例对象
+    //第一次会先尝试获取bean
+    getBean(beanName) 通过beanName获取bean
+    getSingleton() 获取单实例bean
+    //获取不到创建bean实例
+    createBean(beanName, mbd, args) 创建bean实例
+    populateBean(beanName, mbd, instanceWrapper); 给bean对象进行赋值
+    initializeBean(beanName, exposedObject, mbd) 所有后置处理器的调用 {
+        applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName)  初始化之前的处理
+            遍历所有的getBeanPostProcessors，依次执行
+            processor.postProcessBeforeInitialization(result, beanName)为null，跳出循环
+
+        invokeInitMethods(beanName, wrappedBean, mbd) 执行自定义初始化
+            afterPropertiesSet()...
+
+        applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName) 初始化之后的处理
+            processor.postProcessAfterInitialization(result, beanName)
+    }
+
+3.spring底层对 BeanPostProcessor 的使用
+    ApplicationContextAwareProcessor 往组件中 注入IOC容器
+        register()
+        refresh()
+        finishBeanFactoryInitialization()
+        getBean()
+        getSingleton()
+        createBean()
+        populateBean()
+        initializeBean() {
+            applyBeanPostProcessorBeforeInitialization()-->processor.postProcessBeforeInitialization
+                invokeAwareInterfaces() 匹配对应的后置处理器
+                    --> setApplicationContext()
+
+           invokeInitMethods 执行自定义初始化
+
+           applyBeanPostProcessorsAfterInitialization()-->processor.postProcessAfterInitialization
+        }
+
+
+    InitDestroyAnnotationBeanPostProcessor 执行@postConstruct @preDestroy
+          register()
+            refresh()
+            finishBeanFactoryInitialization()
+            getBean()
+            getSingleton()
+            createBean()
+            populateBean()
+            initializeBean() {
+                applyBeanPostProcessorBeforeInitialization
+                    -->processor.postProcessBeforeInitialization
+                        metadata.invokeInitMethods(bean, beanName) metadata包含 要执行的init() 目标
+                            element.invoke(target) 通过反射执行 init()
+                    -->processor.postProcessBeforeDestruction()
+                        metadata.invokeDestroyMethods(bean, beanName) metadata包含 要执行的destroy() 目标
+                            element.invoke(target) 通过反射执行 要执行的destroy()
+
+                invokeInitMethods 执行自定义初始化
+
+                applyBeanPostProcessorsAfterInitialization()-->processor.postProcessAfterInitialization
+            }
+
+    AutowiredAnnotationBeanPostProcessor 向IOC容器中注入 bean

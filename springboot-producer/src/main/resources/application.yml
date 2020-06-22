@@ -1,0 +1,45 @@
+spring:
+  rabbitmq:
+    addresses: 114.55.252.218:5672
+    username: mqTest
+    password: 123
+    virtual-host: testHost
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+  datasource:
+    druid:
+      db1:
+        jdbc-url: jdbc:mysql://114.55.252.218:3306/test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        username: root
+        password: 314159@
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+      db2:
+        jdbc-url: jdbc:mysql://192.168.1.188:3306/client_test?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+server:
+  port: 8003
+  servlet:
+    context-path: /
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true

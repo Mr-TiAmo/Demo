@@ -1,0 +1,58 @@
+stream 原理分析
+
+    中间操作：只对操作进行记录
+        无状态：元素的处理不受之前元素的影响
+            unordered() filter() map() mapToInt() mapToLong() mapToDouble()
+            flatMap() flatMapToInt() flatMapToLong() flatMapToDouble() peek()
+
+        有状态：只有拿到所有元素之后才能继续下去
+            distinct() sorted() limit() skip()
+
+    结束操作：进行实际的求值
+        非短路操作：必须处理完所有元素才能得到最终结果
+            forEach() forEachOrdered() toArray() reduce() collect() max() min() count()
+
+        短路操作：遇到某些符合条件的元素就可以得到最终结果
+            anyMatch() allMatch() noneMatch() findFirst() findAny()
+
+    继承树：
+        BaseStream：规定了流的基础接口
+        stream：定义中间操作和结束操作的方法
+        Int、Long、DoubleInt：是针对于基本类型的特化 方法与Stream中大致对应,当然也有一些差别
+        BaseStream Stream IntStream LongStream DoubleStream：组建了Java的流体系根基
+        PipelineHelper：主要用于Stream执行过程中相关结构的构建ReferencePipeline和AbstractPipeline
+        AbstractPipeline：流水线的核心抽象类，用于构建和管理流水线
+        IntPipeline、LongPipeline、DoublePipeline：这三个类专门为三种基本类型而定制的，Int、long、double进行了优化，主要用于频繁的拆装箱。三者跟ReferencePipeline是并列关系，
+        StatefulOp、StatelessOp：分别对应有状态和无状态中间操作。很多Stream操作会需要一个回调函数（Lambda表达式），一个完整的操作是<数据来源，操作，回调函数>构成的三元组
+
+    AbstractPipeline：操作的记录
+        AbstractPipeline中定义了三个AbstractPipeline类型的变量，sourceStage(源阶段)、previousStage（上游pipeline，前一阶段）、nextStage（下一阶段）。
+        而Head 、StatefulOp 、StatelessOp又继承了ReferencePipeline类。因此Head StatefulOp StatelessOp 他们本身也是AbstractPipeline类型的，这里的每一个pipeline都是一个节点
+        Head用于表示第一个Stage，也就是source stage，调用诸如Collection.stream()方法产生的Stage，很显然这个Stage里不包含任何操作；StatelessOp和StatefulOp分别表示无状态和有状态的Stage，对应于无状态和有状态的中间操作。
+        注意：终结操作不会添加节点
+        Collections.stream()方法得到的Head也就是stage0，紧接着调用一系列的中间操作，不断产生新的stream，这些stream对象以双链表的形式组织在一起，构成整个流水线
+        每个stage记录了前一个stage和本次的操作以及回调函数，依靠这种结构建立起对数据源的所有操作
+
+    Sink接口：操作的叠加
+        当流水线从head开始一次执行每一步操作(包括回调函数)，但前面的stage并不知道后面stage到底执行了哪种操作，以及回调函数的形式，
+        即只有当前stage本身知道如何执行自己包含的操作，所以需要Sink接口协调相邻stage之间的调用关系
+
+        Sink接口相当于对操作进行了一层封装，每个阶段只需要调用自己的Sink的accept方法，accept内部调用下一阶段的accept，类似于处理-->转发模式
+        使用当前sink包装的回调处理函数处理，将处理结果传递给流水线下游的Sink
+
+
+        begin()：开始遍历元素之前 调用该方法，通知sink做好准备
+        end(): 所有元素遍历完成之后调用，通知sink没有更多元素了
+        cancellationRequested(): 是否可以结束操作，让短路操作尽早结束
+        accept(): 遍历元素时调用，接收一个待处理元素，并对元素进行处理；stage把自己包含的操作和回调方法封装到该方法中，
+                前一个stage只需要调用当前的stage.accept()方法就行了
+
+    流程：
+
+
+
+
+
+
+
+

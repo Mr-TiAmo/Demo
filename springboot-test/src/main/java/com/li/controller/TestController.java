@@ -8,6 +8,8 @@ import com.google.common.hash.Funnels;
 import com.li.comm.aop.DataSource;
 import com.li.comm.constant.DataSourceType;
 import com.li.entity.Order;
+import com.li.node.IUserInfoRepository;
+import com.li.node.UserInfo;
 import com.li.rabbitmq.ack.AckSender;
 import com.li.rabbitmq.delay.DelaySender;
 import com.li.rabbitmq.routing.Sender;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: springboot-rabbitmq
@@ -50,6 +53,8 @@ public class TestController {
     private RedisBloom redisBloom;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private IUserInfoRepository userInfoRepository;
 
     /**
      * 谷歌布隆过滤器
@@ -128,7 +133,7 @@ public class TestController {
     public String BloomFilter() {
         for (int i = 1; i < 100; i++) {
             //先放入 redis布隆过滤器容器中
-                redisBloom.addByBloomFilter(bloomFilterHelper, String.valueOf(i), String.valueOf(i));
+            redisBloom.addByBloomFilter(bloomFilterHelper, String.valueOf(i), String.valueOf(i));
         }
         List<Integer> list = new ArrayList<>();
         for (int i = 100; i < 1000; i++) {
@@ -158,5 +163,42 @@ public class TestController {
             }
         }
         System.out.println("测试谷歌BloomFilter 误判：" + list.size()); //在300左右
+    }
+
+    @GetMapping("/keyExpire")
+    @ApiOperation(value = "key过期监听", notes = "redis")
+    public void keyExpire() {
+//        redisTemplate.opsForValue().set("keyExpire", "keyExpire");
+        redisTemplate.opsForValue().set("keyExpire", "11111", 3, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set("hello", "11111", 3, TimeUnit.SECONDS);
+    }
+
+    @GetMapping("/redisPublish")
+    @ApiOperation(value = "redis 发布订阅", notes = "redis")
+    public void redisPublish() throws InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                redisTemplate.convertAndSend("index",String.valueOf(i));
+            }else {
+                redisTemplate.convertAndSend("home",String.valueOf(i));
+            }
+            Thread.sleep(100);
+        }
+
+    }
+
+    @GetMapping("/getUserListByUserId")
+    @ApiOperation(value = "根据userId查询neo4j 子节点", notes = "neo4j")
+    public void getUserListByUserId() throws Exception {
+        // 查询所有
+        List<UserInfo> childList = userInfoRepository.findChildList(73999385108L);
+        System.out.println(childList);
+
+        //添加两个用户的上下级关系
+        userInfoRepository.addSuperior(100000L, 100001L);
+
+        UserInfo userInfo = userInfoRepository.updateUserLevelByUserId(100000L, 1);
+        System.out.println(userInfo);
+
     }
 }

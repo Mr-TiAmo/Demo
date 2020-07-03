@@ -2,8 +2,8 @@ package com.li.rabbitmq.ack;
 
 import com.alibaba.fastjson.JSONObject;
 import com.li.entity.Order;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

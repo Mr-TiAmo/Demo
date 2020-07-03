@@ -1,5 +1,19 @@
 ## springboot整合rabbitmq的基本配置
 spring:
+  #redis
+  redis:
+    #    host: 114.55.252.218
+    host: 127.0.0.1
+    port: 6379
+    password:
+    database: 0
+    timeout: 60s
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
   rabbitmq:
     addresses: 114.55.252.218:5672
     username: mqTest
@@ -32,7 +46,7 @@ spring:
         minIdle: 5
         maxActive: 20
 server:
-  port: 8002
+  port: 8008
   servlet:
     context-path: /
 

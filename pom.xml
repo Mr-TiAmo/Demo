@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.4.RELEASE</version>
+        <version>2.3.0.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -331,6 +331,20 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
+
+<!--        neo4j 依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+        <!--不加这个包放到docker中跑会报错-->
+        <!--https://github.com/spring-guides/gs-accessing-data-neo4j/issues/19-->
+        <dependency>
+            <groupId>io.github.lukehutch</groupId>
+            <artifactId>fast-classpath-scanner</artifactId>
+            <version>3.1.13</version>
+        </dependency>
+
 
     </dependencies>
 

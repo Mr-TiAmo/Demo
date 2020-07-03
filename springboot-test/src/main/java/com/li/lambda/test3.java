@@ -85,6 +85,23 @@ public class test3 {
         System.out.println(collect4);
 
 
+        ///
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        List<Company> companies = Arrays.asList(new Company().setCityId(3).setCpName("111").setAddress("北京市"),
+                new Company().setCityId(2).setCpName("222"),
+                new Company().setCityId(1).setCpName("333"),
+                new Company().setCityId(1).setCpName("333"),
+                new Company().setCityId(2).setCpName("333"));
+        Map<Integer, List<Company>> collect5 = companies.parallelStream().collect(Collectors.groupingBy(Company::getCityId));
+//        for (Integer integer : collect5.keySet()) {
+//            System.out.println(integer+">>>>>>>>>>>>>>" +collect5.get(integer));
+//        }
+        Iterator<Integer> iterator = collect5.keySet().iterator();
+        while (iterator.hasNext()) {
+            Integer key = iterator.next();
+            System.out.println(key+">>>>>>>>>>>>>>" +collect5.get(key));
+        }
+        System.out.println(collect5);
     }
 
     public static String getKey(Company company) {

@@ -13,6 +13,7 @@ import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -77,6 +78,8 @@ public class test3 {
         Map<LocalDate, List<Company>> collect3 = sum.parallelStream()
                 .collect(Collectors.groupingBy(item -> item.getCreateTime().with(TemporalAdjusters.lastDayOfMonth())));
         System.out.println(collect3);
+
+
 
 
         //多属性分组

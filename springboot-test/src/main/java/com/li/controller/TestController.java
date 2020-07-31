@@ -187,6 +187,18 @@ public class TestController {
 
     }
 
+    @GetMapping("/redisPublishList")
+    @ApiOperation(value = "redis 发布订阅 List", notes = "redis")
+    public void redisPublishList() throws InterruptedException {
+        for (int i = 0; i < 5; i++) {
+            redisTemplate.opsForList().rightPush("fan",String.valueOf(i));
+            redisTemplate.convertAndSend("fans",String.valueOf(i));
+            System.out.println("redis 发布订阅 List 执行完毕");
+
+        }
+
+    }
+
     @GetMapping("/getUserListByUserId")
     @ApiOperation(value = "根据userId查询neo4j 子节点", notes = "neo4j")
     public void getUserListByUserId() throws Exception {

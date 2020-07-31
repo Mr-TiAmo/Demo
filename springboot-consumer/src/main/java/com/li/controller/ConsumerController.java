@@ -1,15 +1,18 @@
 package com.li.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.li.comm.event.TransactionalNoticeEventObj;
 import com.li.entity.Order;
 import com.li.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,6 +27,8 @@ public class ConsumerController {
 
     @Autowired
     private OrderService orderService;
+    @Resource
+    private ApplicationEventPublisher publisher;
 
     @GetMapping("/evenTest")
     @ApiOperation(value = "事务事件测试", notes = "event")
@@ -39,5 +44,19 @@ public class ConsumerController {
     public void test2() {
         List<Order> order = orderService.list();
         System.out.println(order);
+    }
+
+
+    @GetMapping("/test1")
+    @ApiOperation(value = "事务事件测试 insert", notes = "查询所有")
+    public void test1() throws Exception{
+        Order order = new Order();
+        order.setId(1);
+        order.setName("张三");
+        order.setMessageId("111");
+        orderService.save(order);
+
+        publisher.publishEvent(new TransactionalNoticeEventObj(order, order.getId()));
+        Thread.sleep(5000);
     }
 }

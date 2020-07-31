@@ -3,6 +3,7 @@ package com.li.comm.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.li.comm.redis.FanReceiver;
 import com.li.comm.redis.RedisReceiver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -69,16 +71,21 @@ public class RedisConfiguration {
     @Bean
     RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
                                             MessageListenerAdapter listenerAdapterA,
-                                            MessageListenerAdapter listenerAdapterB) {
+                                            MessageListenerAdapter listenerAdapterB,
+                                            MessageListenerAdapter fanReceiverAdapter,
+                                            MessageListenerAdapter listenerAdapterBList1) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         //可以添加多个 messageListener
         container.addMessageListener(listenerAdapterA, new PatternTopic("index"));
+        container.addMessageListener(fanReceiverAdapter, new PatternTopic("fans"));
         container.addMessageListener(listenerAdapterB, new PatternTopic("home"));
+        container.addMessageListener(listenerAdapterBList1, new PatternTopic("index"));
 
         return container;
     }
+
 
     @Bean
     MessageListenerAdapter listenerAdapterA(RedisReceiver redisReceiver) {
@@ -90,5 +97,26 @@ public class RedisConfiguration {
     MessageListenerAdapter listenerAdapterB(RedisReceiver redisReceiver) {
         System.out.println("消息适配器B进来了--- 匹配redisReceiver中的receiveMessageB() ");
         return new MessageListenerAdapter(redisReceiver, "receiveMessageB");
+    }
+
+    @Bean
+    MessageListenerAdapter listenerAdapterBList1(RedisReceiver redisReceiver) {
+        System.out.println("消息适配器B进来了--- 匹配redisReceiver中的listenerAdapterBList1() ");
+        return new MessageListenerAdapter(redisReceiver, "listenerAdapterBList1");
+    }
+
+    @Bean
+    CountDownLatch latch() {
+        return new CountDownLatch(1);
+    }
+
+    @Bean
+    FanReceiver fanReceiver(CountDownLatch latch) {
+        return new FanReceiver(latch);
+    }
+
+    @Bean
+    MessageListenerAdapter fanReceiverAdapter(FanReceiver fanReceiver) {
+        return new MessageListenerAdapter(fanReceiver, "receiveMessageList");
     }
 }

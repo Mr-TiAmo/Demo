@@ -24,7 +24,7 @@ public class TransactionalNoticeEventListener {
      * 不能够异步事件，因为 需要被被监听的调用者提交事务才能触发
      * @param eventObj
      */
-    @TransactionalEventListener()
+    @TransactionalEventListener(fallbackExecution = true)
     public void onApplicationEvent(TransactionalNoticeEventObj eventObj) {
         System.out.println("type" + eventObj.getType());
         System.out.println("source" + eventObj.getSource());

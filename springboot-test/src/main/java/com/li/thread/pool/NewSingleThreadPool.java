@@ -31,7 +31,7 @@ public class NewSingleThreadPool {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                     System.out.println(i + Thread.currentThread().getName());
                     countDownLatch.countDown();
                 } catch (Exception e) {

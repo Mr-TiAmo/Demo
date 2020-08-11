@@ -1,7 +1,12 @@
 package com.li.collection;
 
 
+import com.li.spring.bean.Person;
+import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @program: parking_open_api_12.26
@@ -12,18 +17,37 @@ import java.util.*;
 public class ListTest {
 
     public static void main(String[] args) {
-        test1();
+        ConcurrentHashMap<Object, Object> objectObjectConcurrentHashMap = new ConcurrentHashMap<>();
+        objectObjectConcurrentHashMap.put("1",1);
+        objectObjectConcurrentHashMap.put("zz",1);
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put(null,null);
+        List<Person> personList = new ArrayList<>();
+        Hashtable<Object, Object> table = new Hashtable<>(6);
+        table.put("null","null");
+        table.put("null","null");
+        HashSet<Object> objects = new HashSet<>();
+        objects.add(null);
+        objects.add(null);
+        LinkedHashSet<Object> objects1 = new LinkedHashSet<>();
+        objects1.add(null);
+
+
+        personList.add(new Person("张三",15));
+        personList.add(new Person("张三",16));
+        personList.add(new Person("张三",17));
+        personList.add(new Person("张三",18));
 
         List<String> listTest = new ArrayList<>();
         listTest.add("111");
         listTest.add("222");
         listTest.add("333");
-
+        listTest.add("444");
         LinkedList<String> linkedList = new LinkedList<>();
         linkedList.add(0, "333");
         linkedList.add(1, "222");
         linkedList.add(2, "111");
-
+        test2(listTest,personList);
 
 //        for (int i =0; i<100; i++) {
 //
@@ -51,10 +75,10 @@ public class ListTest {
          * 解决 new ArrayList<>(Arrays$ArrayList);
          */
 //        strings.add("444");
-//        ArrayList<String> arrayList = new ArrayList<>(strings);
+        ArrayList<String> arrayList = new ArrayList<>(strings);
     }
 
-    public static void test2(List<String> listTest) {
+    public static void test2(List<String> listTest,List<Person> personList) {
         /**
          * 报ConcurrentModificationException异常；java集合的一种错误检测机制，当多个线程对集合进行结构上的操作是，会产生fail-fast
          * 机制，迭代器在遍历时直接访问集合中的内容，并且在遍历过程中使用一个 modCount 变量。集合在被遍历期间如果内容发生变化，
@@ -68,9 +92,15 @@ public class ListTest {
          * Iterator 的特点是只能单向遍历，但是更加安全，因为它可以确保，在当前遍历的集合元素被更改的时候，
          * 就会抛出 ConcurrentModificationException 异常
          */
-//        for (String s : arrayList) {
+//        for (String s : listTest) {
 //            if (s.equals("222")) {
-//                    strings.remove(s);
+//                listTest.remove(s);
+//            }
+//        }
+//
+//        for (Person person : personList) {
+//            if (16 == person.getAge()) {
+//                personList.remove(person);
 //            }
 //        }
 
@@ -78,7 +108,8 @@ public class ListTest {
         while (iterator.hasNext()) {
             String next = iterator.next();
             if (next.equals("222")) {
-                listTest.remove(next);
+//                listTest.remove(next);
+                iterator.remove();
             }
         }
         System.out.println(listTest);

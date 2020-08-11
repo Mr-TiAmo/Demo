@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * @Description: 策略模式存储类
- * @Author: RU
+ * @Author:
  * @Date: 2020/4/18 15:45
  */
 public class StrategyObject {

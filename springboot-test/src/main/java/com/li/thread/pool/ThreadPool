@@ -14,7 +14,7 @@
                     当有任务过来的时候才会去创建创建线程执行任务。换个说法，线程池创建之后，线程池中的线程数为0，
                     当任务过来就会创建一个线程去执行，直到线程数达到corePoolSize 之后，就会把到达的任务放在队列中。
                     （注意是到达的任务）。换句更精炼的话：corePoolSize 表示允许线程池中允许同时运行的最大线程数。
-                    如果执行了线程池的prestartAllCoreThreads()方法，线程池会提前创建并启动所有核心线程。
+                    如果执行了线程池的preStartAllCoreThreads()方法，线程池会提前创建并启动所有核心线程。
 
       maximumPoolSize :线程池允许的最大线程数，他表示最大能创建多少个线程。maximumPoolSize肯定是大于等于corePoolSize
 

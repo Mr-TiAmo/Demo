@@ -12,7 +12,7 @@ public class ProjectManager extends Handler {
     @Override
     public String handleFeeRequest(String user, double fee) {
         String str = "";
-        if (fee < 500) {
+        if (fee <= 500) {
             if ("张三".equals(user)) {
                 str += "ProjectManager批准了" + user + fee + "元的申请费用";
             } else {

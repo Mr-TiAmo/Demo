@@ -12,7 +12,6 @@ public class test {
         Handler project = new ProjectManager();
         Handler dept = new DeptManager();
         Handler general = new GeneralManager();
-
         general.setSuccessor(dept);
         dept.setSuccessor(project);
 

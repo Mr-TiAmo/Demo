@@ -15,8 +15,11 @@ import java.lang.reflect.Method;
 public class CglibProxy implements MethodInterceptor {
 
     public Object bind(Object obj) {
+        //创建加强器，用来设置生成代理对象的配置
         Enhancer enhancer = new Enhancer();
+        //为加强器指定要代理的方法，（为下面的代理类指定父类）
         enhancer.setSuperclass(obj.getClass());
+        //设置回调，对于代理类上的所有方法，都会调用Callback，而Callback的实现需要intercept()
         enhancer.setCallback(this);
         return enhancer.create();
     }

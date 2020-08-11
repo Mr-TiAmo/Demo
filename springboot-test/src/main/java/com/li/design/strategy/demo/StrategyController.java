@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StrategyController {
 
     @GetMapping("/aaa")
-    public String aaaa(@RequestParam("type") String type){
+    public String aaa(@RequestParam("type") String type){
         StrategyService strategyService = StrategyObject.getMap(type);
         strategyService.test();
         strategyService.init();

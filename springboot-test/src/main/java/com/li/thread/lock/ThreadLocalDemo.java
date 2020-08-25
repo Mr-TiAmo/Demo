@@ -1,5 +1,13 @@
 package com.li.thread.lock;
 
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.util.concurrent.locks.Lock;
+
 /**
  * @program: Demo
  * @description:
@@ -24,6 +32,9 @@ public class ThreadLocalDemo {
     };
 
     public static void main(String[] args) {
+
+        System.out.println( LocalDateTime.now().getDayOfWeek().getValue());
+
         ThreadLocalDemo threadLocalDemo = new ThreadLocalDemo(1);
         System.out.println("i : " + threadLocalDemo.i);
 
@@ -40,5 +51,8 @@ public class ThreadLocalDemo {
         }, "Thread2").start();
 
         System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+
+//        new AnnotationConfigApplicationContext()
+        FileSystemXmlApplicationContext fileSystemXmlApplicationContext = new FileSystemXmlApplicationContext();
     }
 }

@@ -59,4 +59,5 @@ public class ConsumerController {
         publisher.publishEvent(new TransactionalNoticeEventObj(order, order.getId()));
         Thread.sleep(5000);
     }
+
 }

@@ -75,3 +75,240 @@
             }
 
     AutowiredAnnotationBeanPostProcessor 向IOC容器中注入 bean
+
+
+
+
+
+
+
+
+
+
+4.refresh()流程
+    refresh()：在注册IOC容器之前，如果已经有容器存在，则把已有的容器销毁和关闭，类似于对IOC容器重启，在建立好新的容器之后，对容器进行初始化，对bean配置资源进行载入
+            prepareRefresh()：调用容器准备刷新方法，获取容器的当前时间，同时给容器设置同步表示
+
+            ****obtainFreshBeanFactory():调用子类容器的refreshBeanFactory()，启动容器载入bean配置信息
+                    refreshBeanFactory():使用了委派设计模式，父类定义了抽象的 refreshBeanFactory()方法，具体实现调用子类容器的 refreshBeanFactory()方法
+                                          AbstractRefreshableApplicationContext实现的refreshBeanFactory()方法
+                    >>>
+                            1.如果已经有容器，销毁容器中的bean，关闭容器
+                            2.createBeanFactory():创建IOC容器
+                            3.customizeBeanFactory():设置IOC容器的启动参数，开启注解的自动装配，是否可以重写bean，是否可以循环依赖
+
+                            4.loadBeanDefinitions():调用装载Bean定义的方法，主要这里又使用了一个委派模式，在当前类中只定义了抽象的loadBeanDefinitions方法，具体的实现调用子类容器
+                                                    AbstractRefreshableApplicationContext中只定义了抽象的loadBeanDefinitions方法，容器真正调用的是其子类AbstractXmlApplicationContext对该方法的实现，AbstractXmlApplicationContext
+                                    XmlBeanDefinitionReader(): 创建bean读取器，读取xml中bean定义资源
+                                    initBeanDefinitionReader():当Bean读取器读取Bean定义的Xml资源文件时，启用Xml的校验机制
+                                    loadBeanDefinitions():
+                                    >>>
+                                            getConfigResources(): 获取 bean定义资源定位
+                                        ****loadBeanDefinitions():Bean读取器真正实现加载的方法
+                                        >>>
+                                                reader.loadBeanDefinitions():分配路径处理策略
+                                                >>>
+                                                        getResourceLoader():获取在IoC容器初始化过程中设置的资源加载器
+                                                        >>>
+                                                                getResourceByPath():如果是类路径的方式，那需要使用 ClassPathResource 来得到 bean 文件的资源对象
+                                                                UrlResource():如果是 URL 方式，使用 UrlResource 作为 bean 文件的资源对象
+                                                                getResourceByPath():既不是classpath标识，又不是URL标识的Resource 定位，则调用容器本身的getResourceByPath方法获取 Resource
+                                                        getResource(): 通过制定路径获取Bean定义资源文件解析为Spring IOC容器封装的资源
+                                                        >>>
+                                                        loadBeanDefinitions(): 开始真正的读取配置文件
+                                                        >>>
+                                                                loadBeanDefinitions(new EncodedResource(resource)):对Resource对象进行了一次编码封装,这里是载入XML形式Bean定义资源文件方法
+                                                                >>>
+                                                                        getInputStream()：获取xml文件的流文件
+                                                                        doLoadBeanDefinitions():具体的读取过程
+                                                                        >>>
+                                                                                doLoadDocument():将XML文件转换为DOM对象，解析过程由documentLoader实现
+                                                                                ****registerBeanDefinitions():启动对Bean定义解析的详细过程，该解析过程会用到Spring的Bean配置规则
+                                                                                >>>
+                                                                                        doLoadBeanDefinitions():从特定XMl文件中实际载入Bean配置资源的方法，此方法在载入Bean配置资源之后将其转化为Document对象，之后再registerBeanDefinitions启动Spring IOC容器对Bean定义的解析过程
+                                                                                        >>>
+                                                                                                doLoadDocument():使用标准的JAXP将载入的Bean定义资源转换成document对象
+                                                                                                registerBeanDefinitions():按照Spring的Bean语义要求将Bean定义资源解析并转换为容器内部数据结构
+                                                                                                >>>
+                                                                                                        createBeanDefinitionDocumentReader():得到BeanDefinitionDocumentReader来对xml格式的BeanDefinition解析
+                                                                                                        getBeanDefinitionCount():获得容器中注册的Bean数量
+                                                                                                        registerBeanDefinitions():
+                                                                                                        >>>
+                                                                                                                doRegisterBeanDefinitions():
+                                                                                                                >>>
+                                                                                                                        preProcessXml():在解析Bean定义之前，进行自定义的解析，增强解析过程的可扩展性
+                                                                                                                        parseBeanDefinitions():从Document的根元素开始进行Bean定义的Document对象
+                                                                                                                        >>>
+                                                                                                                                parseDefaultElement(): Spring默认的XML命名空间
+                                                                                                                                >>>
+                                                                                                                                        importBeanDefinitionResource():使用<import>元素来导入 IOC 容器所需要的其他资源，Spring IOC 容器在解 析时会首先将指定导入的资源加载进容器中
+                                                                                                                                        processAliasRegistration():使用<ailas>别名时，Spring IOC 容器首先将别名元素所 定义的别名注册到容器中
+                                                                                                                                        processBeanDefinition():处理bean
+                                                                                                                                        >>>
+                                                                                                                                                processBeanDefinition():解析Bean定义资源Document对象的普通元素
+                                                                                                                                                >>>
+                                                                                                                                                        delegate.parseBeanDefinitionElement():如果我们没有使用spring默认的命名空间,那么会执行此方法
+                                                                                                                                                        ****BeanDefinitionReaderUtils.registerBeanDefinition():向Spring IOC容器注册解析得到的Bean定义，这是Bean定义向IOC容器注册的入口
+                                                                                                                                                        >>>
+                                                                                                                                                                getBeanName():获取解析的BeanDefinition的名称
+                                                                                                                                                                registerBeanDefinition():向IOC容器注册BeanDefinition
+                                                                                                                                                                >>>
+                                                                                                                                                                        beanDefinitionMap:存放beanName和beanBeanDefinition映射关系
+                                                                                                                                                                        beanDefinitionNames：存放所有beanName信息
+                                                                                                                                                                        resetBeanDefinition():检查是否有同名的BeanDefinition已经在IOC容器中注册,重置所有已经注册过的BeanDefinition的缓存
+
+                                                                                                                                                                registerAlias():如果解析的BeanDefinition有别名，向容器为其注册别名
+
+
+                                                                                                                                                        getReaderContext().fireComponentRegistered():在完成向Spring IOC容器注册解析得到的Bean定义之后，发送注册事件
+                                                                                                                                        doRegisterBeanDefinitions():处理beans
+
+                                                                                                                                parseCustomElement():用户自定义的XML命名空间
+                                                                                                                                >>>
+                                                                                                                                        getNamespaceURI(): 获取自定义xml命名空间的uri 例如http\://www.springframework.org/schema/context
+                                                                                                                                        xmlReaderContext.getNamespaceHandlerResolver().resolve(namespaceUri): getNamespaceHandlerResolver()获取META-INF下的spring.handlers的映射
+                                                                                                                                        >>>
+                                                                                                                                                resolve():
+                                                                                                                                                BeanUtils.instantiateClass(handlerClass):获取对应的handler实例，即ContextNamespaceHandler
+                                                                                                                                                namespaceHandler.init():执行init方法，向容器中注入registerBeanDefinitionParser映射关系
+
+                                                                                                                                        handler.parse():执行init方法中各个BeanDefinitionParser中的parse()
+                                                                                                                                        >>>
+                                                                                                                                                configureScanner():
+                                                                                                                                                >>>
+                                                                                                                                                        parseTypeFilters():
+                                                                                                                                                        >>>
+                                                                                                                                                                scanner.addIncludeFilter():添加spring自带的扫描注解
+                                                                                                                                                                scanner.addExcludeFilter():添加除spring自带的扫描注解，@resource @PostConstruct @PreDestroy
+                                                                                                                                                doScan():
+                                                                                                                                                >>>
+                                                                                                                                                        findCandidateComponents():扫描包含@Componse注解的类 @service @controller
+                                                                                                                                                        registerBeanDefinition():将扫描到的类封装成beanDefinition对象
+
+                                                                                                                                                registerComponents(): 添加一些BeanComponentDefinition
+
+
+
+
+
+
+                                                                                                                        postProcessXml(root):在解析Bean定义之后，进行自定义的解析，增加解析过程的可扩展性
+
+
+            obtainFreshBeanFactory():创建beanFactory，解析xml标签封装成beanDefinition对象
+            >>>
+                    如果beanFactory不为空则清除BeanFactory和里面的实例
+                    创建DefaultListableBeanFactory，设置是否可以循环依赖 allowCircularReferences，是否允许使用相同名称重新注册不同的bean实现
+                    开始解析xml：
+                        创建xml解析器XmlBeanDefinitionReader，设置资源加载读取器，环境
+                        首先获取需要加载的xml配置文件**.xml或者Resource资源定义资源文件解析为Spring IOC容器封装的资源
+                            如果是需要加载的xml配置文件则通过用流的方式加载配置文件，然后封装成Resource对象
+                            getResourceByPath():如果是类路径的方式，那需要使用 ClassPathResource 来得到 bean 文件的资源对象
+                            UrlResource():如果是 URL 方式，使用 UrlResource 作为 bean 文件的资源对象
+                            getResourceByPath():既不是classpath标识，又不是URL标识的Resource 定位，则调用容器本身的getResourceByPath方法获取 Resource
+                        对上一步的IOC容器封装资源Resource设置编码格式，同时获取到xml文件的流对象
+                        执行doLoadBeanDefinitions(),把xml流文件封装成Document文件对象
+                        执行registerBeanDefinitions(),将Document文件对象里面的标签元素封装成BeanDefinition
+                            通过BeanDefinitionDocumentReader解析器，执行registerBeanDefinitions()完成xml解析
+                            一种为默认标签解析parseDefaultElement(),例如<bean>、<import>、<alias>、<beans>
+                                首先对于默认的解析，通过parseBeanDefinitionElement()解析，会创建GenericBeanDefinition对象，解析对应的属性
+                                    id:Bean 的唯一标识名
+                                    name:用来为 id 创建一个或多个别名
+                                    class:用来定义类的全限定名（包名＋类名）
+                                    parent:子类 Bean 定义它所引用它的父类 Bean。这时前面的 class 属性失效
+                                    abstract（默认为false）：用来定义 Bean 是否为抽象 Bean，它表示这个 Bean 将不会被实例化，一般用于父类 Bean，因为父类 Bean 主要是供子类 Bean 继承使用
+                                    lazy-init（默认为default）：用来定义这个 Bean 是否实现懒初始化
+                                    autowire：定义了 Bean 的自动装载方式
+                                    depends-on（依赖对象）：这个 Bean 在初始化时依赖的对象，这个对象会在这个 Bean 初始化之前创建
+                                    init-method:用来定义 Bean 的初始化方法，它会在 Bean 组装之后调用，它必须是一个无参数的方法
+                                    destroy-method：用来定义 Bean 的销毁方法，它在 BeanFactory 关闭时调用它也必须是一个无参数的方法，它只能应用于singletonBean
+                                    factory-method：定义创建该 Bean 对象的工厂方法，它用于下面的factory-bean，表示这个 Bean 是通过工厂方法创建，此时，class属性失效
+                                    factory-bean:定义创建该 Bean 对象的工厂类。如果使用了“factory-bean”则“class”属性失效
+                                    autowire-candidate：采用 xml 格式配置 bean 时，将<bean/>元素的 autowire-candidate属性设置为 false，这样容器在查找自动装配对象时，将不考虑该 bean，即它不会被考虑作为其它 bean自动装配的候选者，但是该 bean 本身还是可以使用自动装配来注入其它 bean 的
+                                    MutablePropertyValues：用于封装<property>标签的信息，PropertyValue 就是一个 name 和 value 属性，
+                                    ConstructorArgumentValues：用于封装<constructor-arg>标签的信息
+                                    MethodOverrides：用于封装 lookup-method 和 replaced-method 标签的信息
+
+
+                                次之对封装成BeanDefinition的进行装饰，对其对应xml标签的SPI处理类，执行对应的处理
+                                最后对BeanDefinition对象进行缓存注册,beanDefinitionMap存放beanName与beanDefinition的映射，beanDefinitionNames存放beanName
+                            一种为自定义标签解析parseCustomElement(),例如<context:component-scan>
+                                首先通过自定义标签的获取对用的namespace命令空间，NamespaceUri和NamespaceHandler 之间会存在一个映射，
+                                    根据SPI规范在META-INF/spring.handlers目录下有一个继承了NamespaceHandlerSupport处理类，把当前文件加载到ioc中
+                                次之会先执行处理类里面的init()方法，把对应的**BeanDefinitionParser加载到ioc中，执行指定的BeanDefinitionParser的parse方法
+                                例如ComponentScanBeanDefinitionParser，通过parse方法，通过注解扫描器扫描的指定的包下的包含@Component类，并封装成BeanDefinition对象，并添加缓存
+                                最后注册一些BeanPostProcessor类，AutowiredAnnotationBeanPostProcessor,ConfigurationClassPostProcessor,CommonAnnotationBeanPostProcessor
+
+
+            invokeBeanFactoryPostProcessors():遍历执行 实现了 BeanDefinitionRegistryPostProcessor、BeanFactoryPostProcessor
+            >>>     进行了一些排序，按照排序的次序执行，先执行beandefinitionRegistryPostprocessor，再执行beanFactoryPostProcessor
+
+            finishBeanFactoryInitialization():bean实例化过程，di，BeanPostProcessor的执行、aop
+            >>>
+                    如果有抽象父类，把父类中的属性值合并到当前要实例化bean的beanDefinition对象中
+                    如果不是抽象的，单例的，非懒加载的就实例化，如果bean实现了FactoryBean接口，获取实现类方法中返回的对象
+                    getBean():实例化过程
+                    首先从一级缓存中获取实例，如果没有，开始创建实例
+                    如果有@DependsOn 注解，先初始化 对应的依赖bean
+                    单例情况下：
+                        首先将当前要初始化的bean添加到singletonsCurrentlyInCreation容器中，表明当前bean正在实例化
+                            createBean():>>>doCreateBean():
+                                首先创建实例createBeanInstance():
+                                    如果有factoryMethodName属性返回对应实例(@bean注解的bean中方法名称会被放在beandefinitino的factoryMethod属性中)
+                                    如果有@autowire注解的构造函数，通过对应的构造器创建实例
+                                    如果是无参构造函数，返回对应的实例
+                                其次对实现了BeanPostProcessor接口的 中 MergedBeanDefinitionPostProcessor接口类型典型运用：
+                                    如果实现了CommonAnnotationBeanPostProcessor，会对@PostConstruct，@PreDestroy,@Resource注解进行扫描，通过InjectionMetadata对象放置收集到的对应的方法或者属性的ResourceElement对象
+                                    如果实现了AutowiredAnnotationBeanPostProcessor，会对@Autowired,@Value注解注解进行扫描，通过injectionMetadata对象放置收集到的对应方法或者属性的ResourceElement对象
+                                次之判断对当前正在实例化的bean是否需要提前暴露，放入三级缓存中，用于解决循环依赖
+                                接下来进行依赖注入populateBean():
+                                    会去InjectionMetadata里面收集的方法或者属性，通过反射执行，如果value是引用类型，将会调用getBean生成实例
+                                最后会执行一些后置处理器initializeBean():
+                                    执行Aware接口的一些实现类
+                                    执行applyBeanPostProcessorsBeforeInitialization前置处理器，例如InitDestroyAnnotationBeanPostProcessor  @PostConstruct注解方法的调用、ImportAwareBeanPostProcessor  对ImportAware类型实例setImportMetadata调用、ApplicationContextAwareProcessor  对某个Aware接口方法的调用
+                                    执行InitializingBean接口的实现类(先执行afterPropertiesSet，再执行init-method属性调用)
+                                    执行applyBeanPostProcessorsAfterInitialization后置处理器(@PreDestroy，aop入口)
+
+
+                        bean创建完成后singletonsCurrentlyInCreation要删除该bean
+                        创建对象成功时，把对象缓存到singletonObjects缓存中,bean创建完成时放入一级缓存
+
+
+            循环依赖：
+                当A创建实例的时候，会先把未完成依赖注入的A放到提前暴露的三级缓存中，当执行到A的依赖注入时，发现需要创建B
+                创建B实例的时候，会先把把未完成依赖注入的B放到提前暴露的三级缓存中，当执行到B的依赖注入时，通过三级缓存发现了A，同时把A在三级缓存升级至二级缓存，B换成依赖注入
+                最后A完成依赖注入
+
+                构造器循环依赖的时候，在创建实例createBeanInstance()时候，直接执行 构造器生成实例，然后直接返回，不会走后面的 提前暴露流程
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

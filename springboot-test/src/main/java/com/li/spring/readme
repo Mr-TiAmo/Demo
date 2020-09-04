@@ -283,6 +283,31 @@
 
 
 
+    注解注入：
+        this()：
+            创建AnnotatedBeanDefinitionReader解析器、ClassPathBeanDefinitionScanner扫描器
+            在创建解析器的时候注入了部分PostProcessor，ConfigurationClassPostProcessor、AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor
+        register():
+            将当前的一个或多个类注册到beanDefinition中注册并缓存,通过java反射获取annotatedMetadata元数据
+        refresh():
+            invokeBeanFactoryPostProcessors()执行this()中注册的AnnotationConfigApplicationContext(实现了BeanDefinitionRegistryPostProcessor)
+            先把指定类注入beanfinition通过annotatedMetadata元数据判断是否带有@Configuration注解的类，如果有将其记录为候选配置类
+            对候选配置类进行排序
+            分析配置类过程中，如果遇到注解了@Component类，直接作为Bean定义注册到容器
+            如果遇到注解了@ComponentScans类，递归处理获取是否需要懒加载，扫描加载路径，是否需要排除扫描，依次递归当前包下有@component、@componentScan注解，通过doScan()扫描到有注解的类并封装成BeanDefinition对象
+            如果@Import、@ImportResource，识别配置类，添加到分析器的属性configurationClasses中去
+
+        先把指定类注入beanfinition，然后获取metadate，扫描拥有的注解，如果拥有@componentScan注解，扫描指定包下的包含@component
+        如果带有@Configuration注解的类，将其记录为候选配置类
+        进行排序
+        分析配置类，分析过程中，如果遇到注解了@Component类，直接作为Bean定义注册到容器，如果注解或者注解的注解中有@Import, 处理所有这些@import，识别配置类，添加到分析器的属性configurationClasses中去
+            先处理@Component，
+            再@ComponentScans、
+                获取是否需要懒加载，扫描加载路径，是否需要排除扫描，依次递归当前包下有@component、@componentScan注解，扫描到有注解的类并封装成BeanDefinition对象
+            @Import、ImportResource
+
+
+
 
 
 

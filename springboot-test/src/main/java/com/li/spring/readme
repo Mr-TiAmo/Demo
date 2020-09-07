@@ -223,14 +223,14 @@
                                     init-method:用来定义 Bean 的初始化方法，它会在 Bean 组装之后调用，它必须是一个无参数的方法
                                     destroy-method：用来定义 Bean 的销毁方法，它在 BeanFactory 关闭时调用它也必须是一个无参数的方法，它只能应用于singletonBean
                                     factory-method：定义创建该 Bean 对象的工厂方法，它用于下面的factory-bean，表示这个 Bean 是通过工厂方法创建，此时，class属性失效
-                                    factory-bean:定义创建该 Bean 对象的工厂类。如果使用了“factory-bean”则“class”属性失效
+                                    factory-bean:定义创建该 Bean 对象的工厂类。如果使用factory-bean则class属性失效
                                     autowire-candidate：采用 xml 格式配置 bean 时，将<bean/>元素的 autowire-candidate属性设置为 false，这样容器在查找自动装配对象时，将不考虑该 bean，即它不会被考虑作为其它 bean自动装配的候选者，但是该 bean 本身还是可以使用自动装配来注入其它 bean 的
                                     MutablePropertyValues：用于封装<property>标签的信息，PropertyValue 就是一个 name 和 value 属性，
                                     ConstructorArgumentValues：用于封装<constructor-arg>标签的信息
                                     MethodOverrides：用于封装 lookup-method 和 replaced-method 标签的信息
 
 
-                                次之对封装成BeanDefinition的进行装饰，对其对应xml标签的SPI处理类，执行对应的处理
+                                次之对封装成BeanDefinition的进行装饰，对其对应<bean>、<import>xml标签的SPI处理类，执行对应的处理
                                 最后对BeanDefinition对象进行缓存注册,beanDefinitionMap存放beanName与beanDefinition的映射，beanDefinitionNames存放beanName
                             一种为自定义标签解析parseCustomElement(),例如<context:component-scan>
                                 首先通过自定义标签的获取对用的namespace命令空间，NamespaceUri和NamespaceHandler 之间会存在一个映射，
@@ -265,7 +265,10 @@
                                     会去InjectionMetadata里面收集的方法或者属性，通过反射执行，如果value是引用类型，将会调用getBean生成实例
                                 最后会执行一些后置处理器initializeBean():
                                     执行Aware接口的一些实现类
-                                    执行applyBeanPostProcessorsBeforeInitialization前置处理器，例如InitDestroyAnnotationBeanPostProcessor  @PostConstruct注解方法的调用、ImportAwareBeanPostProcessor  对ImportAware类型实例setImportMetadata调用、ApplicationContextAwareProcessor  对某个Aware接口方法的调用
+                                    执行applyBeanPostProcessorsBeforeInitialization前置处理器
+                                        例如InitDestroyAnnotationBeanPostProcessor  @PostConstruct注解方法的调用、
+                                        ImportAwareBeanPostProcessor  对ImportAware类型实例setImportMetadata调用、
+                                        ApplicationContextAwareProcessor  对某个Aware接口方法的调用
                                     执行InitializingBean接口的实现类(先执行afterPropertiesSet，再执行init-method属性调用)
                                     执行applyBeanPostProcessorsAfterInitialization后置处理器(@PreDestroy，aop入口)
 
@@ -283,7 +286,7 @@
 
 
 
-    注解注入：
+    @AnnotationConfigApplicationContext注解注入：
         this()：
             创建AnnotatedBeanDefinitionReader解析器、ClassPathBeanDefinitionScanner扫描器
             在创建解析器的时候注入了部分PostProcessor，ConfigurationClassPostProcessor、AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor
@@ -293,18 +296,18 @@
             invokeBeanFactoryPostProcessors()执行this()中注册的AnnotationConfigApplicationContext(实现了BeanDefinitionRegistryPostProcessor)
             先把指定类注入beanfinition通过annotatedMetadata元数据判断是否带有@Configuration注解的类，如果有将其记录为候选配置类
             对候选配置类进行排序
-            分析配置类过程中，如果遇到注解了@Component类，直接作为Bean定义注册到容器
-            如果遇到注解了@ComponentScans类，递归处理获取是否需要懒加载，扫描加载路径，是否需要排除扫描，依次递归当前包下有@component、@componentScan注解，通过doScan()扫描到有注解的类并封装成BeanDefinition对象
+            分析配置类过程中，使用ConfigurationClassParser解析器parse()，首先会将BeanDefinitionHolder转化为ConfigurationClass
+            如果遇到注解了@Component类，递归查询是否包含@Configuration、@Component、@ComponentScans、@Import，并转换为configurationClass对象
+            如果遇到注解了@ComponentScans类，会先执行ComponentScanAnnotationParser的parse(),递归处理获取是否需要懒加载，扫描加载路径，是否需要排除扫描，依次递归当前包下有@component、@componentScan注解，通过doScan()扫描到有注解的类并封装成BeanDefinition对象
             如果@Import、@ImportResource，识别配置类，添加到分析器的属性configurationClasses中去
+            最后通过configurationClasses是否是导入的isImported、getBeanMethods、getImportedResources、getImportBeanDefinitionRegistrars通过不同的处理注入beanDefinition并缓存
 
-        先把指定类注入beanfinition，然后获取metadate，扫描拥有的注解，如果拥有@componentScan注解，扫描指定包下的包含@component
-        如果带有@Configuration注解的类，将其记录为候选配置类
-        进行排序
-        分析配置类，分析过程中，如果遇到注解了@Component类，直接作为Bean定义注册到容器，如果注解或者注解的注解中有@Import, 处理所有这些@import，识别配置类，添加到分析器的属性configurationClasses中去
-            先处理@Component，
-            再@ComponentScans、
-                获取是否需要懒加载，扫描加载路径，是否需要排除扫描，依次递归当前包下有@component、@componentScan注解，扫描到有注解的类并封装成BeanDefinition对象
-            @Import、ImportResource
+
+    	基于@EnableAspectJAutoProxy注解AOP：
+    		首先通过@configuration/@component将当前类注册到IOC中，通过解析@EnableAspectJAutoProxy，@Import(AspectJAutoProxyRegistrar.class)向IOC注册对应的AOP注册类，通过该类
+    			重写的registerBeanDefinitions()向IOC注册了一个AnnotationAwareAspectJAutoProxyCreator处理类
+    		在refresh().finishBeanFactoryInitialization()bean实例化过程
+
 
 
 

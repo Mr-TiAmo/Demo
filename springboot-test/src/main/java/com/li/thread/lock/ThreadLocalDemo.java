@@ -2,6 +2,7 @@ package com.li.thread.lock;
 
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.time.DayOfWeek;
@@ -33,26 +34,27 @@ public class ThreadLocalDemo {
 
     public static void main(String[] args) {
 
-        System.out.println( LocalDateTime.now().getDayOfWeek().getValue());
-
-        ThreadLocalDemo threadLocalDemo = new ThreadLocalDemo(1);
-        System.out.println("i : " + threadLocalDemo.i);
-
-        threadLocal.set("main");
-        threadLocal.set("1");
-
-        new Thread(() -> {
-            threadLocal.set("Thread1");
-        }, "Thread1").start();
-
-        new Thread(() -> {
-            threadLocal.set("Thread2");
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
-        }, "Thread2").start();
-
-        System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+//        System.out.println( LocalDateTime.now().getDayOfWeek().getValue());
+//
+//        ThreadLocalDemo threadLocalDemo = new ThreadLocalDemo(1);
+//        System.out.println("i : " + threadLocalDemo.i);
+//
+//        threadLocal.set("main");
+//        threadLocal.set("1");
+//
+//        new Thread(() -> {
+//            threadLocal.set("Thread1");
+//        }, "Thread1").start();
+//
+//        new Thread(() -> {
+//            threadLocal.set("Thread2");
+//            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+//        }, "Thread2").start();
+//
+//        System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
 
 //        new AnnotationConfigApplicationContext()
-        FileSystemXmlApplicationContext fileSystemXmlApplicationContext = new FileSystemXmlApplicationContext();
+//        FileSystemXmlApplicationContext fileSystemXmlApplicationContext = new FileSystemXmlApplicationContext();
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
     }
 }

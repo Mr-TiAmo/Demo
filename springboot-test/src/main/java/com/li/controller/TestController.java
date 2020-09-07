@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 /**
  * @program: springboot-rabbitmq
@@ -72,7 +74,9 @@ public class TestController {
     @GetMapping("/aaa")
     @ApiOperation(value = "mq普通消息测试", notes = "rabbitmq")
     public void test1() throws Exception {
-        sender.send();
+        IntStream.range(0,5).forEach(i -> {
+            sender.send();
+        });
     }
 
     @GetMapping("/topic")
@@ -213,4 +217,5 @@ public class TestController {
         System.out.println(userInfo);
 
     }
+
 }

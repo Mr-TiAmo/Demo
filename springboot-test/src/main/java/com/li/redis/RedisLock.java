@@ -50,39 +50,41 @@ public class RedisLock {
      */
     private Integer count = 0;
     @GetMapping("/lockDemo")
-    public String lock()throws Exception{
+    public String lock() throws Exception {
         long timeOut = 1000L;
         long beginTime = System.currentTimeMillis();
-        String value = String.valueOf(timeOut+ beginTime);
+        String value = String.valueOf(timeOut + beginTime);
         Boolean isLock = redisTemplate.opsForValue().setIfAbsent("lockkey", value);
-        if(!isLock){  //没有获取到锁
+        if (!isLock) {  //没有获取到锁
+            //判断其他线程获取到的锁是否超时
             Object sourceLockkey = redisTemplate.opsForValue().get("lockkey");
             long oldTime = Long.valueOf(sourceLockkey.toString());
-            if(oldTime < System.currentTimeMillis()){  //原锁已经超时
-                String value1 = String.valueOf(timeOut+ System.currentTimeMillis());
+            if (oldTime < System.currentTimeMillis()) {  //原锁已经超时
+                String value1 = String.valueOf(timeOut + System.currentTimeMillis());
+
                 Object newLockkey = redisTemplate.opsForValue().getAndSet("lockkey", value1);
                 long newTime = Long.valueOf(newLockkey.toString());
-                if(!(oldTime == newTime)){
+                if (!(oldTime == newTime)) {
                     throw new Exception("被别人抢走了锁");
-                }else{
+                } else {
                     count++;
                     System.out.println("得到了锁");
                     beginTime = System.currentTimeMillis();
                 }
             }
             throw new Exception("锁被他人占有中!");
-        }else{
+        } else {
             count++;
             System.out.println("获取锁成功");
         }
         System.out.println(count);
         //业务逻辑  已获取到锁
         System.out.println("抢到了锁+++++++++++++++执行业务逻辑++++++++++++");
-        long executeTime = System.currentTimeMillis()-beginTime;
-        if(executeTime<timeOut){
+        long executeTime = System.currentTimeMillis() - beginTime;
+        if (executeTime < timeOut) {
             //释放锁
             Boolean lockkey = redisTemplate.delete("lockkey");
-            if(lockkey){
+            if (lockkey) {
                 System.out.println("成功释放锁");
             }
         }

@@ -1,4 +1,4 @@
-package com.li.classloader;
+package com.li.gc;
 
 /**
  * @program: Demo

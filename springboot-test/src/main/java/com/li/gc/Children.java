@@ -1,4 +1,6 @@
-package com.li.classloader;
+package com.li.gc;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @program: Demo
@@ -6,7 +8,7 @@ package com.li.classloader;
  * @author: li
  * @create: 2020-08-24 10:52
  **/
-public class Children extends Parent{
+public class Children extends Parent {
 
     public static String name = "tony";
     public static final String id;

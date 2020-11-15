@@ -173,7 +173,7 @@ public class SynchronizeTest {
     //  不同一个对象访问 同一个或不同的 synchronized普通方法         不会互斥
 
     //  同一个对象访问 同一个或不同的 synchronized静态方法     互斥
-    //  同一个对象访问 同一个或不同的 synchronized静态方法       互斥
+    //  不同对象访问 同一个或不同的 synchronized静态方法       互斥
 
     //  synchronized普通方法 和 普通方法 、synchronized静态方法和 普通方法  不会互斥
 

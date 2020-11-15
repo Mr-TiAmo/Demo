@@ -1,13 +1,9 @@
 package com.li.thread.lock;
 
-import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.openjdk.jol.info.ClassLayout;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @program: Demo
@@ -33,28 +29,30 @@ public class ThreadLocalDemo {
     };
 
     public static void main(String[] args) {
+        ThreadLocalDemo threadLocalDemo = new ThreadLocalDemo(1);
+        System.out.println("i : " + threadLocalDemo.i);
 
-//        System.out.println( LocalDateTime.now().getDayOfWeek().getValue());
-//
-//        ThreadLocalDemo threadLocalDemo = new ThreadLocalDemo(1);
-//        System.out.println("i : " + threadLocalDemo.i);
-//
-//        threadLocal.set("main");
-//        threadLocal.set("1");
-//
-//        new Thread(() -> {
-//            threadLocal.set("Thread1");
-//        }, "Thread1").start();
-//
-//        new Thread(() -> {
-//            threadLocal.set("Thread2");
-//            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
-//        }, "Thread2").start();
-//
-//        System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+        threadLocal.set("main");
+        threadLocal.set("1");
 
-//        new AnnotationConfigApplicationContext()
-//        FileSystemXmlApplicationContext fileSystemXmlApplicationContext = new FileSystemXmlApplicationContext();
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
+        new Thread(() -> {
+            threadLocal.set("Thread1");
+        }, "Thread1").start();
+
+        new Thread(() -> {
+            threadLocal.set("Thread2");
+            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+        }, "Thread2").start();
+
+        System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
+
+
+        Object o = new Object();
+        System.out.println(ClassLayout.parseInstance(o).toPrintable());
+        synchronized (o) {
+            System.out.println(ClassLayout.parseInstance(o).toPrintable());
+        }
+
+        ReentrantLock lock = new ReentrantLock();
     }
 }

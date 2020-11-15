@@ -1,5 +1,6 @@
 package com.li.thread.volatiles;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -10,29 +11,26 @@ import java.util.concurrent.locks.Lock;
  **/
 public class VarTest {
 
-    private static boolean flag = false;
+    private static volatile boolean flag = true;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         VarTest varTest = new VarTest();
-        varTest.test1();
-        varTest.test();
+        new Thread(varTest::test1).start();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        flag = false;
+
     }
 
 
     public void test1() {
-        Thread thread = new Thread(() -> {
-            while (!flag) {
-                System.out.println("false");
-            }
-        });
-        thread.start();
+        System.out.println("start");
+        while (flag) {
+        }
+        System.out.println("end");
     }
 
-    public void test() {
-        Thread thread = new Thread(() -> {
-            System.out.println("true");
-            flag = true;
-        });
-        thread.start();
-    }
 }

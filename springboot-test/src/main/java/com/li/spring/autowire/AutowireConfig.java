@@ -29,6 +29,8 @@ import org.springframework.context.annotation.*;
  *  * 　　                   4. 如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配；
  *                      2.@inject 需要导入javax.inject包，
  *                          支持@primary注解，不支持@autowire(required = false)功能
+ *                  三：自定义组件想要使用spring底层的一些组件（ApplicationContext，beanFactory）
+ *                      自定义组件实现xxxAware，创建对象的时候会调用指定的方法注入组件
 *
  *
  * @author: 栗翱

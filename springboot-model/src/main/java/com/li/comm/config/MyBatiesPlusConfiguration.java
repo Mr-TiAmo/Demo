@@ -1,11 +1,8 @@
 package com.li.comm.config;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.li.comm.constant.DataSourceType;
 import org.apache.ibatis.plugin.Interceptor;
@@ -18,7 +15,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -42,28 +38,6 @@ public class MyBatiesPlusConfiguration {
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
         return paginationInterceptor;
-    }
-
-    /**
-     * 逻辑删除
-     *
-     * @return
-     */
-    @Bean
-    public ISqlInjector sqlInjector() {
-        return new LogicSqlInjector();
-    }
-    /**
-     * SQL执行效率插件
-     * 设置 dev test 环境开启
-     */
-    @Bean
-    @Profile({"dev", "qa"})
-    public PerformanceInterceptor performanceInterceptor() {
-        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
-        performanceInterceptor.setMaxTime(1000);
-        performanceInterceptor.setFormat(true);
-        return performanceInterceptor;
     }
 
     @Bean(name = "db1")

@@ -58,7 +58,7 @@ public class Generator {
             //Author设置作者
             globalConfig.setAuthor("栗翱");
             //是否覆盖文件
-            globalConfig.setFileOverride(true);
+            globalConfig.setFileOverride(false);
             //生成后打开文件
             globalConfig.setOpen(false);
             mpg.setGlobalConfig(globalConfig);
@@ -83,7 +83,7 @@ public class Generator {
              */
             PackageConfig pc = new PackageConfig();
             //这里的模块名需要在控制台输入的，即生成的代码在哪个包下
-            pc.setModuleName("auto/" + scanner("模块名"));
+            pc.setModuleName(scanner("模块名"));
             //父包名。如果为空，将下面子包名必须写全部， 否则就只需写子包名
             pc.setParent("com");
             //set进去代码生成器对象中

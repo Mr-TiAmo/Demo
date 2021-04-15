@@ -8,8 +8,6 @@ import com.google.common.hash.Funnels;
 import com.li.comm.aop.DataSource;
 import com.li.comm.constant.DataSourceType;
 import com.li.entity.Order;
-import com.li.node.IUserInfoRepository;
-import com.li.node.UserInfo;
 import com.li.rabbitmq.ack.AckSender;
 import com.li.rabbitmq.delay.DelaySender;
 import com.li.rabbitmq.routing.Sender;
@@ -55,8 +53,6 @@ public class TestController {
     private RedisBloom redisBloom;
     @Autowired
     private RedisTemplate redisTemplate;
-    @Autowired
-    private IUserInfoRepository userInfoRepository;
 
     /**
      * 谷歌布隆过滤器
@@ -96,6 +92,12 @@ public class TestController {
     @ApiOperation(value = "mq延时DXL测试", notes = "rabbitmq")
     public void delay() throws Exception {
         delaySender.send();
+    }
+
+    @GetMapping("/eventCompara")
+    @ApiOperation(value = "事务事件测试对照", notes = "Event")
+    public void eventCompara() throws Exception {
+        orderService.eventCompara();
     }
 
     @GetMapping("/transactionalNoticeEvent")
@@ -203,19 +205,19 @@ public class TestController {
 
     }
 
-    @GetMapping("/getUserListByUserId")
-    @ApiOperation(value = "根据userId查询neo4j 子节点", notes = "neo4j")
-    public void getUserListByUserId() throws Exception {
-        // 查询所有
-        List<UserInfo> childList = userInfoRepository.findChildList(73999385108L);
-        System.out.println(childList);
-
-        //添加两个用户的上下级关系
-        userInfoRepository.addSuperior(100000L, 100001L);
-
-        UserInfo userInfo = userInfoRepository.updateUserLevelByUserId(100000L, 1);
-        System.out.println(userInfo);
-
-    }
+//    @GetMapping("/getUserListByUserId")
+//    @ApiOperation(value = "根据userId查询neo4j 子节点", notes = "neo4j")
+//    public void getUserListByUserId() throws Exception {
+//        // 查询所有
+//        List<UserInfo> childList = userInfoRepository.findChildList(73999385108L);
+//        System.out.println(childList);
+//
+//        //添加两个用户的上下级关系
+//        userInfoRepository.addSuperior(100000L, 100001L);
+//
+//        UserInfo userInfo = userInfoRepository.updateUserLevelByUserId(100000L, 1);
+//        System.out.println(userInfo);
+//
+//    }
 
 }

@@ -46,18 +46,4 @@ public class ConsumerController {
         System.out.println(order);
     }
 
-
-    @GetMapping("/test1")
-    @ApiOperation(value = "事务事件测试 insert", notes = "查询所有")
-    public void test1() throws Exception{
-        Order order = new Order();
-        order.setId(1);
-        order.setName("张三");
-        order.setMessageId("111");
-        orderService.save(order);
-
-        publisher.publishEvent(new TransactionalNoticeEventObj(order, order.getId()));
-        Thread.sleep(5000);
-    }
-
 }

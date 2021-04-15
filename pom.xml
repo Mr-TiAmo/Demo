@@ -15,6 +15,7 @@
         <module>springboot-test</module>
         <module>springboot-mapper</module>
         <module>springboot-service</module>
+        <module>springboot-db-test</module>
     </modules>
 
     <parent>
@@ -341,11 +342,11 @@
             <version>1</version>
         </dependency>
 
-        <!--        neo4j 依赖-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-        </dependency>
+<!--        &lt;!&ndash;        neo4j 依赖&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-neo4j</artifactId>-->
+<!--        </dependency>-->
         <!--不加这个包放到docker中跑会报错-->
         <!--https://github.com/spring-guides/gs-accessing-data-neo4j/issues/19-->
         <!--        <dependency>-->

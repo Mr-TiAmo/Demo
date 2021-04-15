@@ -1,14 +1,14 @@
 spring:
   main:
     allow-bean-definition-overriding: true
-  #neo4j
-  data:
-    neo4j:
-      #测试
-      uri: bolt://192.168.0.156:7687
-      username: neo4j
-      password: 123456
-      #aliyun
+#  neo4j
+#  data:
+#    neo4j:
+##      #测试
+##      uri: bolt://192.168.0.156:7687
+##      username: neo4j
+##      password: 123456
+#      #aliyun
 #      uri: bolt://114.55.252.218:7687
 #      username: neo4j
 #      password: neo4j

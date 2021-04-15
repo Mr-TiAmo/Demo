@@ -1,17 +1,15 @@
 package com.li;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+//import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
 @SpringBootApplication
-@EnableNeo4jRepositories
+//@EnableNeo4jRepositories
 public class TestApplication {
 
     public static void main(String[] args) {

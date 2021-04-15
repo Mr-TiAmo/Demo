@@ -1,37 +1,35 @@
-package com.li.entity;
+package com.li.mybatisplus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author 栗翱
- * @since 2020-06-17
+ * @since 2021-04-12
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("t_order")
-public class Order extends Model<Order> implements Serializable {
+public class User extends Model {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String name;
+    private String userName;
 
-    private String messageId;
+    private Integer userAge;
+
+    private String userSex;
 
 
 }

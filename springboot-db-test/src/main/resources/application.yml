@@ -14,19 +14,6 @@ spring:
         max-wait: -1
         max-idle: 5
         min-idle: 0
-  rabbitmq:
-    addresses: 114.55.252.218:5672
-    username: mqTest
-    password: 123
-    virtual-host: testHost
-    ## 消费端配置
-    listener:
-      simple:
-        concurrency: 5
-        ## manual:手动 ack（确认）
-        acknowledge-mode: manual
-        max-concurrency: 10
-        prefetch: 1
   datasource:
     druid:
       db1:
@@ -46,7 +33,7 @@ spring:
         minIdle: 5
         maxActive: 20
 server:
-  port: 8002
+  port: 8010
   servlet:
     context-path: /
 

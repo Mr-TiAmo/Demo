@@ -33,6 +33,9 @@ public class ConsumerController {
     @GetMapping("/evenTest")
     @ApiOperation(value = "事务事件测试", notes = "event")
     public String test1(@RequestParam("id") Integer id) {
+        if (null == id) {
+            return "";
+        }
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Order::getId, id);
         Order order = orderService.getOne(queryWrapper);

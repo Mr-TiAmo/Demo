@@ -33,6 +33,10 @@ public interface OrderService extends IService<Order> {
 
     /**
      * TransactionSynchronizationManager 使用
+     * 有业务在实体提交过后进行某些或者一系列业务操作，通过spring的aop机制进行后置业务的处理
+     * 事务提交成功后，才会异步执行后续操作；事务失败， 不会执行异步操作
+     * 事务提交成功，异步操作异常，已提交事务不会回滚！！！！
+     * 异步事件发生在 事务提交生效之后
      * @throws Exception
      */
     void aysnTransactionalEvent() throws Exception;

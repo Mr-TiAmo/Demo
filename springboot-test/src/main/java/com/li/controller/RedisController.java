@@ -1,18 +1,11 @@
 package com.li.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.Funnels;
 import com.li.comm.aop.DataSource;
 import com.li.comm.constant.DataSourceType;
-import com.li.entity.Order;
-import com.li.rabbitmq.ack.AckSender;
-import com.li.rabbitmq.delay.DelaySender;
-import com.li.rabbitmq.routing.Sender;
-import com.li.rabbitmq.topic.ErrorSender;
-import com.li.rabbitmq.topic.InfoSender;
 import com.li.redis.BloomFilterHelper;
 import com.li.redis.RedisBloom;
 import com.li.service.OrderService;
@@ -20,44 +13,34 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 /**
- * @program: springboot-rabbitmq
+ * @program: demo
  * @description:
- * @author: 栗翱
- * @create: 2020-05-06 15:22
+ * @author: li
+ * @create: 2021-04-15 15:34
  **/
 @RestController
-public class TestController {
-    @Autowired
-    private Sender sender;
-    @Autowired
-    private ErrorSender errorSender;
-    @Autowired
-    private InfoSender infoSender;
-    @Autowired
-    private AckSender ackSender;
-    @Autowired
-    private DelaySender delaySender;
-    @Autowired
-    private OrderService orderService;
+@RequestMapping("/redis")
+public class RedisController {
     @Autowired
     private RedisBloom redisBloom;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 谷歌布隆过滤器
      */
-    private static final int size = 10000;// 初始容量
+    // 初始容量
+    private static final int size = 10000;
     private static BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size, 0.03);
 
     /**
@@ -66,62 +49,6 @@ public class TestController {
     private BloomFilterHelper<String> bloomFilterHelper = new BloomFilterHelper<>((Funnel<String>) (from, into) -> into.putString(from, Charsets.UTF_8)
             .putString(from, Charsets.UTF_8), 1000, 0.03);
 //    private BloomFilterHelper<Integer> bloomFilterHelper = new BloomFilterHelper<>(Funnels.integerFunnel(), 10000, 0.03);
-
-    @GetMapping("/aaa")
-    @ApiOperation(value = "mq普通消息测试", notes = "rabbitmq")
-    public void test1() throws Exception {
-        IntStream.range(0,5).forEach(i -> {
-            sender.send();
-        });
-    }
-
-    @GetMapping("/topic")
-    @ApiOperation(value = "mq路由消息测试", notes = "rabbitmq")
-    public void topic() throws Exception {
-        errorSender.send();
-        infoSender.send();
-    }
-
-    @GetMapping("/ack")
-    @ApiOperation(value = "mq消息ack测试", notes = "rabbitmq")
-    public void ack() throws Exception {
-        ackSender.send();
-    }
-
-    @GetMapping("/delay")
-    @ApiOperation(value = "mq延时DXL测试", notes = "rabbitmq")
-    public void delay() throws Exception {
-        delaySender.send();
-    }
-
-    @GetMapping("/eventCompara")
-    @ApiOperation(value = "事务事件测试对照", notes = "Event")
-    public void eventCompara() throws Exception {
-        orderService.eventCompara();
-    }
-
-    @GetMapping("/transactionalNoticeEvent")
-    @ApiOperation(value = "事务事件测试", notes = "Event")
-    public void transactionalNoticeEvent() throws Exception {
-        orderService.testTransactionalEvent();
-    }
-
-    @GetMapping("/noticeEvent")
-    @ApiOperation(value = "事件测试", notes = "Event")
-    public void noticeEvent() throws Exception {
-        orderService.testEvent();
-    }
-
-
-    @GetMapping("/test")
-    @ApiOperation(value = "test", notes = "test")
-    @DataSource(value = DataSourceType.db1)
-    public String test2(@RequestParam("id") Integer id) {
-        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Order::getId, id);
-        Order order = orderService.getOne(queryWrapper);
-        return order.getName();
-    }
 
     @GetMapping("/testRedis")
     @ApiOperation(value = "testRedis", notes = "redis")
@@ -204,20 +131,4 @@ public class TestController {
         }
 
     }
-
-//    @GetMapping("/getUserListByUserId")
-//    @ApiOperation(value = "根据userId查询neo4j 子节点", notes = "neo4j")
-//    public void getUserListByUserId() throws Exception {
-//        // 查询所有
-//        List<UserInfo> childList = userInfoRepository.findChildList(73999385108L);
-//        System.out.println(childList);
-//
-//        //添加两个用户的上下级关系
-//        userInfoRepository.addSuperior(100000L, 100001L);
-//
-//        UserInfo userInfo = userInfoRepository.updateUserLevelByUserId(100000L, 1);
-//        System.out.println(userInfo);
-//
-//    }
-
 }

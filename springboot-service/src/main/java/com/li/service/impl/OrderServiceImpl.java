@@ -85,18 +85,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
     public void aysnTransactionalEvent() throws Exception {
         Order order = new Order();
         order.setName("马六");
         order.setMessageId("111");
         baseMapper.insert(order);
+        System.out.println("添加数据：" + order.getId());
+        // 事务未提交，查询当前数据
+        if (Objects.nonNull(order.getId())) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", order.getId());
+            String s = OkHttpUtil.get("http://localhost:8002/consumer/evenTest", map);
+            System.out.println("未提交事务调取信息" + s);
+        }
         if (TransactionSynchronizationManager.isActualTransactionActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    super.afterCommit();
+//                    int i = 1/0;
+                    System.out.println("事务提交成功，异步执行");
+                    if (Objects.nonNull(order.getId())) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("id", order.getId());
+                        String s = OkHttpUtil.get("http://localhost:8002/consumer/evenTest", map);
+                        System.out.println("已交事务调取信息" + s);
+                    }
                 }
             });
         }
+        Thread.sleep(10000);
+        System.out.println("休眠结束");
     }
 }

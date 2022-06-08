@@ -1,0 +1,64 @@
+运行 JVMtest, 然后加上启动参数 -XX:+PrintGCDetails，打印 GC 日志详情
+
+正在执行...
+[GC (Allocation Failure) [PSYoungGen: 65536K->10727K(76288K)] 65536K->19668K(251392K), 0.0073985 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+[GC (Allocation Failure) [PSYoungGen: 75894K->10726K(141824K)] 84835K->44391K(316928K), 0.0086574 secs] [Times: user=0.06 sys=0.00, real=0.01 secs]
+[GC (Allocation Failure) [PSYoungGen: 141798K->10737K(141824K)] 175463K->86320K(316928K), 0.0131314 secs] [Times: user=0.03 sys=0.03, real=0.01 secs]
+[GC (Allocation Failure) [PSYoungGen: 141809K->10749K(272896K)] 217392K->126054K(448000K), 0.0120179 secs] [Times: user=0.03 sys=0.03, real=0.01 secs]
+[GC (Allocation Failure) [PSYoungGen: 272893K->10749K(272896K)] 388198K->204583K(467456K), 0.0408671 secs] [Times: user=0.02 sys=0.03, real=0.04 secs]
+[Full GC (Ergonomics) [PSYoungGen: 10749K->0K(272896K)] [ParOldGen: 193834K->171997K(334848K)] 204583K->171997K(607744K), [Metaspace: 3568K->3568K(1056768K)], 0.0433593 secs] [Times: user=0.11 sys=0.00, real=0.04 secs]
+[GC (Allocation Failure) [PSYoungGen: 262144K->75036K(544256K)] 434141K->247033K(879104K), 0.0178529 secs] [Times: user=0.05 sys=0.01, real=0.02 secs]
+[GC (Allocation Failure) [PSYoungGen: 544028K->101881K(592384K)] 716025K->348214K(927232K), 0.0530776 secs] [Times: user=0.08 sys=0.03, real=0.05 secs]
+[Full GC (Ergonomics) [PSYoungGen: 101881K->0K(592384K)] [ParOldGen: 246332K->265488K(464896K)] 348214K->265488K(1057280K), [Metaspace: 3568K->3568K(1056768K)], 0.0600766 secs] [Times: user=0.17 sys=0.00, real=0.06 secs]
+[GC (Allocation Failure) [PSYoungGen: 490496K->150203K(961536K)] 755984K->415700K(1426432K), 0.0413970 secs] [Times: user=0.05 sys=0.11, real=0.04 secs]
+执行结束!共生成对象次数:9719
+Heap
+ PSYoungGen      total 961536K, used 889893K [0x000000076b400000, 0x00000007b2800000, 0x00000007c0000000)
+  eden space 804864K, 91% used [0x000000076b400000,0x000000079865a8f8,0x000000079c600000)
+  from space 156672K, 95% used [0x00000007a8480000,0x00000007b172ee68,0x00000007b1d80000)
+  to   space 181248K, 0% used [0x000000079c600000,0x000000079c600000,0x00000007a7700000)
+ ParOldGen       total 464896K, used 265496K [0x00000006c1c00000, 0x00000006de200000, 0x000000076b400000)
+  object space 464896K, 57% used [0x00000006c1c00000,0x00000006d1f46198,0x00000006de200000)
+  Metaspace       used 4060K, capacity 4572K, committed 4864K, reserved 1056768K
+  class space    used 445K, capacity 460K, committed 512K, reserved 1048576K
+
+
+参数信息：
+    Heap 堆使用详情
+        PSYoungGen 年轻代， 总计961536K， 使用889893K， 后面的方括号中是内存地址信息，新生代又分化eden space、from space和to space这三部分
+    ParOldGen 老年代，总计464896K， 265496K
+        object space 对象空间，总计464896K，其中 57% used
+        Metaspace 元空间数据区总计使用了 4060K，容量是 4572K，JVM 保证可用的大小是 4864K，保留空间 1GB 左右
+        class space 类空间 使用了445K，容量是460K
+
+    [Full GC (Ergonomics) [PSYoungGen: 10749K->0K(272896K)] [ParOldGen: 193834K->171997K(334848K)] 204583K->171997K(607744K), [Metaspace: 3568K->3568K(1056768K)], 0.0433593 secs] [Times: user=0.11 sys=0.00, real=0.04 secs]
+    [GC (Allocation Failure) [PSYoungGen: 65536K->10727K(76288K)] 65536K->19668K(251392K), 0.0073985 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+       GC类型 GC原因
+       PSYoungGen：年轻代  [PSYoungGen: 65536K->10727K(76288K)] 65536K->19668K(251392K), 0.0073985 secs]
+             65536K(年轻代GC前使用空间)  10727K(年轻代GC后使用空间) 76288K(年轻代总空间)
+             65536K(堆内存GC前使用空间)  19668K(堆内存GC后使用空间) 251392K(堆内存总空间)
+             0.0073985 secs 用户线程暂停时间
+       ParOldGen：老年代  [ParOldGen: 193834K->171997K(334848K)] 204583K->171997K(607744K), [Metaspace: 3568K->3568K(1056768K)], 0.0433593 secs] [Times: user=0.11 sys=0.00, real=0.04 secs]
+            GC 事件的持续时间，分为 user、sys、real 三个部分
+            user 表示 GC 线程所消耗的总 CPU 时间
+            sys 表示操作系统调用和系统等待事件所消耗的时间
+            real 则表示应用程序实际暂停的时间。
+            因为并不是所有的操作过程都能全部并行，所以在 Parallel GC 中，real 约等于 user+system/GC 线程数
+            笔者的机器是 8 个物理线程，所以默认是 8 个 GC 线程。分析这个时间，可以发现，如果使用串行 GC，可能得暂停 120 毫秒，
+            但并行 GC 只暂停了 20 毫秒，实际上性能是大幅度提升了
+
+
+
+
+
+参数设置：
+    使用串行垃圾收集器：-XX:+UseSerialGC
+    使用并行垃圾收集器：-XX:+UseParallelGC 和 -XX:+UseParallelGC -XX:+UseParallelOldGC 是等价的，可以通过 GC 日志文件中的 flags 看出来
+    使用 CMS 垃圾收集器：-XX:+UseConcMarkSweepGC 和 -XX:+UseParNewGC -XX:+UseConcMarkSweepGC 是等价的，
+        但如果只指定 -XX:+UseParNewGC 参数则老年代 GC 会使用 SerialGC。使用CMS时，命令行参数中会自动计算出年轻代、老年代的初始值和最大值，
+        以及最大晋升阈值等信息（例如 -XX:MaxNewSize=178958336 -XX:NewSize=178958336 -XX:OldSize=357912576）。
+    使用 G1 垃圾收集器：-XX:+UseG1GC。原则上不能指定 G1 垃圾收集器的年轻代大小，否则不仅是画蛇添足，更是自废武功了，
+        因为 G1 的回收方式是小批量划定区块（region）进行，可能一次普通 GC 中既有年轻代又有老年代，可能某个区块一会是老年代，一会又变成年轻代了
+
+    -XX:+PrintGCApplicationStoppedTime 可以输出每次 GC 的持续时间和程序暂停时间；
+    -XX:+PrintReferenceGC 输出 GC 清理了多少引用类型

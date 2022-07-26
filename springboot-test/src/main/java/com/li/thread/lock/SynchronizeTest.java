@@ -104,6 +104,20 @@ public class SynchronizeTest {
 //            }
 //        },"thread2").start();
 
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                demo.test1();
+//            }
+//        },"thread1").start();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                demo1.test2();
+//            }
+//        },"thread2").start();
+
 
         //synchronized修饰静态方法
         //一个对象直接在两个线程中调用两个不同的同步方法会互斥
@@ -152,19 +166,19 @@ public class SynchronizeTest {
 //            }
 //        }, "thread2").start();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                demo.test3();
-            }
-        },"thread1").start();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                demo.test5();
-            }
-        },"thread2").start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                demo.test1();
+//            }
+//        },"thread1").start();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                demo.test5();
+//            }
+//        },"thread2").start();
     }
     //  同一个对象访问 synchronized普通方法 synchronized静态方法 不会互斥
     //  不同一个对象访问 synchronized普通方法 synchronized静态方法  不会互斥

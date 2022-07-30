@@ -2,6 +2,9 @@ package com.li.common;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,11 +18,40 @@ import java.util.Date;
 public class Time {
 
     public static void main(String[] args) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date date = simpleDateFormat.parse("2020-2-13 09:58:20");
-        String time = getTime(new Date(), date);
-        System.out.println(time);
-        System.out.println(String.valueOf(-1.0));
+
+
+        // 字符串 转 LocalDateTime
+        String str = "1986-04-12 12:30:01";
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println(LocalDateTime.parse(str, time));
+
+        // 格式化输出 当前时间戳
+        System.out.println(time.format(LocalDateTime.now()));
+
+        // 获取秒数
+        System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).getEpochSecond());
+        // 获取毫秒
+        System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
+
+
+        // 字符串 转 date
+        DateTimeFormatter day = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime parse = LocalDateTime.parse(str, day);
+        Date date = Date.from(parse.toInstant(ZoneOffset.of("+8")));
+        System.out.println(date);
+
+        // date  转 字符串
+        Date date1 = new Date();
+        LocalDateTime localDateTime = date1.toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
+        System.out.println(day.format(localDateTime));
+
+        // 字符串 转 时间戳
+        LocalDateTime parse1 = LocalDateTime.parse(str, time);
+        System.out.println(parse1.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+
+        // 时间戳 格式化输出 字符串
+        LocalDateTime localDateTime1 = new Date(1635489604917L).toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
+        System.out.println(day.format(localDateTime1));
 
     }
 
@@ -52,5 +84,7 @@ public class Time {
         calendar.setTime(date);
         return calendar;
     }
+
+
 
 }

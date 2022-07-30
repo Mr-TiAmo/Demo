@@ -356,7 +356,12 @@
         <!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-
+        <!--    kryo 深拷贝   -->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

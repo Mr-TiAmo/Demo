@@ -63,3 +63,38 @@ Heap
 
     -XX:+PrintGCApplicationStoppedTime 可以输出每次 GC 的持续时间和程序暂停时间；
     -XX:+PrintReferenceGC 输出 GC 清理了多少引用类型
+
+
+
+
+
+
+
+
+
+jvm参数：
+    -XX:CICompilerCount=2
+    -XX:ConcGCThreads=1
+    -XX:+ExitOnOutOfMemoryError
+    -XX:G1HeapRegionSize=1048576
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:HeapDumpPath=null
+    -XX:InitialHeapSize=1073741824
+    -XX:MarkStackSize=4194304
+    -XX:MaxHeapSize=1073741824
+    -XX:MaxNewSize=643825664
+    -XX:MinHeapDeltaBytes=1048576
+    -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:ReservedCodeCacheSize=268435456
+    -XX:+UseCompressedClassPointers
+    -XX:+UseCompressedOops
+    -XX:+UseFastUnorderedTimeStamps
+    -XX:+UseG1GC
+    -XX:-UseGCOverheadLimit
+     -Dfile.encoding=UTF-8
+    -Xms1024m -Xmx1024m
+    -XX:ReservedCodeCacheSize=256m
+    -XX:-UseGCOverheadLimit
+    -Xloggc:/data/insur/logs/tomcat_gc.log
+    -XX:+PrintGCDateStamps -XX:+PrintGCDetails
+    -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError
+    -XX:HeapDumpPath=/data/insur/logs -XX:+ExitOnOutOfMemoryError

@@ -1,0 +1,76 @@
+Compiled from "JVMtest.java"
+public class com.li.jvm.JVMtest {
+  public com.li.jvm.JVMtest();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: invokestatic  #2                  // Method java/lang/System.currentTimeMillis:()J
+       3: lstore_1
+       4: getstatic     #3                  // Field java/util/concurrent/TimeUnit.SECONDS:Ljava/util/concurrent/TimeUnit;
+       7: lconst_1
+       8: invokevirtual #4                  // Method java/util/concurrent/TimeUnit.toMillis:(J)J
+      11: lstore_3
+      12: lload_1
+      13: lload_3
+      14: ladd
+      15: lstore        5
+      17: new           #5                  // class java/util/concurrent/atomic/LongAdder
+      20: dup
+      21: invokespecial #6                  // Method java/util/concurrent/atomic/LongAdder."<init>":()V
+      24: astore        7
+      26: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+      29: ldc           #8                  // String ����ִ��...
+      31: invokevirtual #9                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+      34: sipush        2000
+      37: istore        8
+      39: iload         8
+      41: anewarray     #10                 // class java/lang/Object
+      44: astore        9
+      46: invokestatic  #2                  // Method java/lang/System.currentTimeMillis:()J
+      49: lload         5
+      51: lcmp
+      52: ifge          96
+      55: ldc           #11                 // int 102400
+      57: invokestatic  #12                 // Method generateGarbage:(I)Ljava/lang/Object;
+      60: astore        10
+      62: aload         7
+      64: invokevirtual #13                 // Method java/util/concurrent/atomic/LongAdder.increment:()V
+      67: getstatic     #14                 // Field random:Ljava/util/Random;
+      70: iconst_2
+      71: iload         8
+      73: imul
+      74: invokevirtual #15                 // Method java/util/Random.nextInt:(I)I
+      77: istore        11
+      79: iload         11
+      81: iload         8
+      83: if_icmpge     93
+      86: aload         9
+      88: iload         11
+      90: aload         10
+      92: aastore
+      93: goto          46
+      96: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+      99: new           #16                 // class java/lang/StringBuilder
+     102: dup
+     103: invokespecial #17                 // Method java/lang/StringBuilder."<init>":()V
+     106: ldc           #18                 // String ִ�н���!�����ɶ������:
+     108: invokevirtual #19                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     111: aload         7
+     113: invokevirtual #20                 // Method java/util/concurrent/atomic/LongAdder.longValue:()J
+     116: invokevirtual #21                 // Method java/lang/StringBuilder.append:(J)Ljava/lang/StringBuilder;
+     119: invokevirtual #22                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     122: invokevirtual #9                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+     125: return
+
+  static {};
+    Code:
+       0: new           #26                 // class java/util/Random
+       3: dup
+       4: invokespecial #27                 // Method java/util/Random."<init>":()V
+       7: putstatic     #14                 // Field random:Ljava/util/Random;
+      10: return
+}

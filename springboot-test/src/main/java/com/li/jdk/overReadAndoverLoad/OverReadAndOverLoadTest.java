@@ -37,8 +37,9 @@ public class OverReadAndOverLoadTest {
         Animal animal = new Animal();
         Animal bird = new Bird();
         Animal cat = new Cat();
-
+        // 重写时 方法接受者已经确定为 animal
         animal.run();
+        // 重写时 方法接受者已经确定为 bird
         bird.run();
         cat.run();
     }

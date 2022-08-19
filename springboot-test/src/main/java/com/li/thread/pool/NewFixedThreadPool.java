@@ -18,7 +18,7 @@ public class NewFixedThreadPool {
         CountDownLatch countDownLatch = new CountDownLatch(20);
         ThreadFactory threadFactory = new ThreadFactoryBuilder().setNamePrefix("固定线程池").build();
         ThreadPoolExecutor fixedThreadPool =
-                new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), threadFactory);
+                new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), threadFactory);
 //        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 20; i++) {
             fixedThreadPool.execute(getThread(i, countDownLatch));

@@ -1,6 +1,7 @@
 package com.li.thread.pool;
 
 import cn.hutool.core.thread.ThreadFactoryBuilder;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.*;
 
@@ -18,8 +19,10 @@ public class NewCachedThreadPool {
         CountDownLatch countDownLatch = new CountDownLatch(20);
         ThreadFactory threadFactory = new ThreadFactoryBuilder().setNamePrefix("缓存线程池").build();
         ThreadPoolExecutor cachedThreadPool =
-                new ThreadPoolExecutor(0, 2147483647, 60L, TimeUnit.SECONDS, new SynchronousQueue(), threadFactory);
+                new ThreadPoolExecutor(0, 2147483647, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory);
 //        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+        // 核心线程 是否允许超时关闭
+        cachedThreadPool.allowCoreThreadTimeOut(true);
         for (int i = 0; i < 20; i++) {
             cachedThreadPool.execute(getThread(i, countDownLatch));
         }

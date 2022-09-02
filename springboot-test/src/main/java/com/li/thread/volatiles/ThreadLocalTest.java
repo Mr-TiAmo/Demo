@@ -23,6 +23,7 @@ public class ThreadLocalTest extends ThreadLocal {
 
         ThreadLocal<String> threadLocal1 = new ThreadLocal<>();
         threadLocal1.set("2");
+        threadLocal1.remove();
         System.out.println(threadLocal.get());
         System.out.println(threadLocal1.get());
         System.out.println(threadLocal);

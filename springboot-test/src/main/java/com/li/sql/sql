@@ -123,7 +123,7 @@ select SQL_NO_CACHE COUNT(*)  FROM vote_record ;      // 0.931    type - index
 
 
 
-索引 user_id
+索引 id,  user_id
 select SQL_NO_CACHE id  FROM vote_record WHERE user_id = '111';     //0.021
 select SQL_NO_CACHE *  FROM vote_record WHERE user_id = '111';      //0.022
 
@@ -132,6 +132,8 @@ select SQL_NO_CACHE COUNT(user_id)  FROM vote_record ; // 0.595     type - all
 select SQL_NO_CACHE COUNT(id)  FROM vote_record ;      // 0.598    type - index
 select SQL_NO_CACHE COUNT(1)  FROM vote_record ;      // 0.568     type - index
 select SQL_NO_CACHE COUNT(*)  FROM vote_record ;      // 0.568    type - index
+
+
 
 
 

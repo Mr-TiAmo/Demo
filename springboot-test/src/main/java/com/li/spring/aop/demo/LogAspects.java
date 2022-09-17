@@ -26,8 +26,8 @@ public class LogAspects {
      */
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        System.out.println("before pointCut");
-        System.out.println(joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
+        System.out.println("before pointCut...");
+        System.out.println("before pointCut..." + joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
 
     }
 
@@ -37,8 +37,8 @@ public class LogAspects {
      */
     @After("pointCut()")
     public void after(JoinPoint joinPoint) {
-        System.out.println("after pointCut");
-        System.out.println(joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
+        System.out.println("after pointCut...");
+        System.out.println("after pointCut..." + joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
     }
 
 
@@ -49,9 +49,9 @@ public class LogAspects {
      */
     @AfterReturning(value = "pointCut()", returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
-        System.out.println("afterReturning pointCut");
-        System.out.println(joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
-        System.out.println(joinPoint.getSignature().getName() + "返回参数.....参数列表是" + Arrays.asList(result));
+        System.out.println("afterReturning pointCut...");
+        System.out.println("afterReturning pointCut..." + joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
+        System.out.println("afterReturning pointCut..." + joinPoint.getSignature().getName() + "返回参数.....参数列表是" + Arrays.asList(result));
     }
 
 
@@ -60,13 +60,13 @@ public class LogAspects {
      * 注意JoinPoint joinPoint参数必须写在第一位，否则不识别
      * @param joinPoint
      */
-//    @AfterThrowing(value = "pointCut()", throwing = "e")
-//    public void afterThrowing(JoinPoint joinPoint, Exception e) {
-//        System.out.println("afterThrowing pointCut");
-//        System.out.println(joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
-//        System.out.println(joinPoint.getSignature().getName() + "方法异常......异常信息" + e);
-//    }
-//
+    @AfterThrowing(value = "pointCut()", throwing = "e")
+    public void afterThrowing(JoinPoint joinPoint, Exception e) {
+        System.out.println("afterThrowing pointCut...");
+        System.out.println("afterThrowing pointCut..." + joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
+        System.out.println("afterThrowing pointCut..." + joinPoint.getSignature().getName() + "方法异常......异常信息" + e);
+    }
+
 
     /**
      * 环绕增强
@@ -74,9 +74,9 @@ public class LogAspects {
      */
     @Around(value = "pointCut()")
     public void around(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("around pointCut");
-        System.out.println(joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
+        System.out.println("around pointCut...");
+        System.out.println("around pointCut..." + joinPoint.getSignature().getName() + "开始运行.....参数列表是" + Arrays.asList(joinPoint.getArgs()));
         Object result = joinPoint.proceed();
-        System.out.println(joinPoint.getSignature().getName() + "返回参数.....参数列表是" + Arrays.asList(result));
+        System.out.println("around pointCut..." + joinPoint.getSignature().getName() + "返回参数.....参数列表是" + Arrays.asList(result));
     }
 }

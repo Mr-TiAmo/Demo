@@ -1,0 +1,141 @@
+CREATE TABLE `vote_record_memory` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `user_id` varchar(20) NOT NULL DEFAULT '',
+    `vote_num` int(10) unsigned NOT NULL DEFAULT '0',
+    `group_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `status` tinyint(2) unsigned NOT NULL DEFAULT '1',
+   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`),
+    KEY `index_user_id` (`user_id`) USING HASH
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+/*
+ Navicat MySQL Data Transfer
+
+ Source Server         : localhost
+ Source Server Type    : MySQL
+ Source Server Version : 50537
+ Source Host           : localhost:3306
+ Source Schema         : test
+
+ Target Server Type    : MySQL
+ Target Server Version : 50537
+ File Encoding         : 65001
+
+ Date: 16/09/2022 16:36:34
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for vote_record
+-- ----------------------------
+DROP TABLE IF EXISTS `vote_record`;
+CREATE TABLE `vote_record`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL,
+  `user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `vote_num` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `group_id` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `status` tinyint(2) UNSIGNED NOT NULL DEFAULT 1,
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3267001 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+-- 创建生成长度为n的随机字符串的函数
+DELIMITER // -- 修改MySQL delimiter：'//'
+DROP FUNCTION IF EXISTS `rand_string` //
+SET NAMES utf8 //
+CREATE FUNCTION `rand_string` (n INT) RETURNS VARCHAR(255) CHARSET 'utf8'
+BEGIN
+    DECLARE char_str varchar(100) DEFAULT 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    DECLARE return_str varchar(255) DEFAULT '';
+    DECLARE i INT DEFAULT 0;
+    WHILE i < n DO
+        SET return_str = concat(return_str, substring(char_str, FLOOR(1 + RAND()*62), 1));
+        SET i = i+1;
+    END WHILE;
+    RETURN return_str;
+END //
+
+-- 创建插入数据的存储过程
+DROP PROCEDURE IF EXISTS `add_vote_record_memory`
+
+DELIMITER //
+CREATE PROCEDURE `add_vote_record_memory`(IN n INT)
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE vote_num INT DEFAULT 0;
+    DECLARE group_id INT DEFAULT 0;
+    DECLARE status TINYINT DEFAULT 1;
+    DECLARE id INT DEFAULT 1;
+    WHILE i < n DO
+        SET vote_num = FLOOR(1 + RAND() * 10000);
+        SET group_id = FLOOR(0 + RAND()*3);
+        SET status = FLOOR(1 + RAND()*2);
+        SET id = i;
+        INSERT INTO `vote_record_memory` VALUES (id, rand_string(20), vote_num, group_id, status, NOW(), NOW());
+        SET i = i + 1;
+    END WHILE;
+END //
+DELIMITER ;  -- 改回默认的 MySQL delimiter：';'
+
+CALL add_vote_record_memory(10000000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+优化
+
+------------------
+SET SESSION query_cache_type=0;
+-----------------
+
+
+
+无添加额外索引
+select SQL_NO_CACHE COUNT(user_id)  FROM vote_record ; // 0.974     type - all
+select SQL_NO_CACHE COUNT(id)  FROM vote_record ;      // 0.954    type - index
+select SQL_NO_CACHE COUNT(1)  FROM vote_record ;      // 0.932      type - index
+select SQL_NO_CACHE COUNT(*)  FROM vote_record ;      // 0.931    type - index
+
+
+
+索引 id,  user_id
+select SQL_NO_CACHE id  FROM vote_record WHERE user_id = '111';     //0.021
+select SQL_NO_CACHE *  FROM vote_record WHERE user_id = '111';      //0.022
+
+
+select SQL_NO_CACHE COUNT(user_id)  FROM vote_record ; // 0.595     type - all
+select SQL_NO_CACHE COUNT(id)  FROM vote_record ;      // 0.598    type - index
+select SQL_NO_CACHE COUNT(1)  FROM vote_record ;      // 0.568     type - index
+select SQL_NO_CACHE COUNT(*)  FROM vote_record ;      // 0.568    type - index
+
+
+
+
+
+
+

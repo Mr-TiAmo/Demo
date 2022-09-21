@@ -25,7 +25,7 @@ public class SqlCreate {
         Class<?> aClass = Class.forName(name);
         Connection connection = DriverManager.getConnection(url, user, password);
         if (connection != null) {
-            insert(connection, 30000);
+            insert(connection, 50000);
         }
     }
 

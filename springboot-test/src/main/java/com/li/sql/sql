@@ -139,3 +139,23 @@ select SQL_NO_CACHE COUNT(*)  FROM vote_record ;      // 0.568    type - index
 
 
 
+
+// limit 优化
+SELECT SQL_NO_CACHE * FROM vote_record LIMIT 10000000,10;   //7.263
+SELECT SQL_NO_CACHE * FROM vote_record v1 , (SELECT  id FROM vote_record LIMIT 10000000,10) V2 WHERE v1.id = v2.id;  //6.009
+SELECT SQL_NO_CACHE * FROM vote_record WHERE id > 10000000 limit 10;  //0.023
+
+EXPLAIN SELECT SQL_NO_CACHE * FROM vote_record LIMIT 10000000,10;  --all
+EXPLAIN SELECT SQL_NO_CACHE * FROM vote_record v1 , (SELECT  id FROM vote_record LIMIT 10000000,10) V2 WHERE v1.id = v2.id; -- v1 primary  v2 user_id  template all
+EXPLAIN SELECT SQL_NO_CACHE * FROM vote_record WHERE id > 10000000 limit 10;  -- primary
+
+
+
+
+
+
+
+
+
+
+

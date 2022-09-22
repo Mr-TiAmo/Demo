@@ -1,4 +1,4 @@
-package com.li.redis;
+package com.li.redis.redislock;
 
 import cn.hutool.core.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;

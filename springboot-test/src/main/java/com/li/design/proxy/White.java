@@ -13,6 +13,6 @@ public class White {
     }
 
     public String test(){
-        return "hello";
+        return "White hello";
     }
 }

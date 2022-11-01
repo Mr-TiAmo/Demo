@@ -86,7 +86,12 @@
             <scope>test</scope>
         </dependency>
 
-
+        <!--  redis 分布式锁       -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.14.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -273,12 +278,12 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>1.9.1</version>
+<!--            <version>1.9.1</version>-->
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.2</version>
+<!--            <version>1.9.2</version>-->
         </dependency>
 
         <dependency>
@@ -362,6 +367,14 @@
             <artifactId>kryo</artifactId>
             <version>4.0.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>4.7.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

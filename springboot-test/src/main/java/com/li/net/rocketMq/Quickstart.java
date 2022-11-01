@@ -30,7 +30,7 @@ public class Quickstart {
     public static void main(String[] args) throws Exception {
         //实例化生产者 指定生产组名称
         DefaultMQProducer producer = new DefaultMQProducer("order_product_group_name");
-        producer.setNamesrvAddr("127.0.0.1:9876");
+        producer.setNamesrvAddr("192.168.179.129:9876");
         //初始化
         producer.start();
         //发送单条消息
@@ -249,5 +249,30 @@ public class Quickstart {
 
         consumer.start();
         System.out.printf("Consumer Started.%n");
+    }
+
+    /**
+     * 顺序消费
+     * 局部顺序消费：
+     * 全局顺序消费：所有发到mq的消息都被顺序消费，类似数据库中的binlog，需要严格保证全局操作的顺序性
+     *
+     * 假设订单A的消息为A1，A2，A3，发送顺序也如此。订单B的消息为B1，B2，B3，A订单消息先发送，B订单消息后发送
+     * A1，A2，A3，B1，B2，B3是全局顺序消息，严重降低了系统的并发度
+     * A1，B1，A2，A3，B2，B3是局部顺序消息
+     */
+
+    /**
+     *  局部顺序消费
+     *
+     *  实现关键点：
+     *      消息顺序发送：多线程发送的消息无法保证有序性，因此，针对同一个业务编号(如同一笔订单)的消息需要保证在一个线程内顺序发送，在上一个消息发送成功后，在进行下一个消息的发送。
+     *                  对应到mq中，消息发送方法就得使用同步发送，异步发送无法保证顺序性
+     *      消息顺序存储：mq的topic下会存在多个queue，要保证消息顺序存储，需要同一个业务编号的消息被发送到同一个queue中，因此，需要使用MessageQueueSelector来选择要发送的queue，
+     *                  即对业务编号进行hash，根据队列数量对hash值取余，将消息发送到一个queue中
+     *      消息顺序消费：要保证消息顺序消费，同一个queue就只能被一个消费者消费， 因此对broker中的消息队列加锁， 即同一时刻，一个消费队列只能被一个消费者中的一个线程消费
+     *
+     */
+    public void partOrder() {
+
     }
 }
